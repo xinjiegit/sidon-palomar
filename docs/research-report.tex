@@ -1,0 +1,2111 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype,booktabs,longtable}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\T}{\mathbb R/\mathbb Z}
+\newcommand{\F}{\mathbb F}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\ceil}[1]{\left\lceil #1\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1\right\rfloor}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\sat}{sat}
+\DeclareMathOperator{\dist}{dist}
+\allowdisplaybreaks
+\title{Affine compression and largest Sidon subsets\\\large Research report and proof audit}
+\author{Research session with Codex}
+\date{3 October 2026 --- final session report}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For every $n$-element set of integers, we prove the existence of a Sidon
+subset of size
+\[
+\left(\frac{2}{3\sqrt3}+o(1)\right)\sqrt n
+=\bigl(0.3849001794\ldots+o(1)\bigr)\sqrt n.
+\]
+The proof strengthens the compression estimate supplied in the task by
+adding a common random affine shift and using exact two-point averaging.
+The resulting injective Freiman map has a domain of size at least
+$n/2-n(n-1)/(8m)$ in a cyclic group of arbitrary order $m$.
+We also prove a weighted version with uniform point-inclusion probabilities.
+This does not resolve Erd\H{o}s's conjectural constant $1$.
+The argument has independent internal audits; publication novelty has not
+been certified. In particular, affine randomization already appears in
+Ruzsa's 1995 work, whose consequences require correcting the supplied
+claim about the previous best benchmark.
+\end{abstract}
+\tableofcontents
+
+\section{Result and status}
+
+Throughout, a Sidon set means a set for which
+\[
+b_1+b_2=b_3+b_4
+\quad\Longrightarrow\quad
+\{b_1,b_2\}=\{b_3,b_4\}
+\]
+as unordered multisets. Repetitions are allowed; in particular a
+nonconstant three-term arithmetic progression is forbidden. Write $s(A)$
+for the largest cardinality of a Sidon subset of $A$, and put
+\[
+H(n)=\min_{A\subset\Z,\ |A|=n}s(A).
+\]
+
+\begin{theorem}[Universal lower bound]\label{thm:main}
+For every prime power $q$, put $m=q^2+q+1$. Every $n$-element set
+$A\subset\Z$ contains a Sidon subset of cardinality at least
+\begin{equation}\label{eq:finite-bound}
+\ceil{\frac{q+1}{m}
+\ceil{\frac n2-\frac{n(n-1)}{8m}}}.
+\end{equation}
+A negative right side can of course be replaced by zero, or by one if
+$n\ge1$. Consequently
+\begin{equation}\label{eq:main}
+H(n)\ge\left(\frac{2}{3\sqrt3}+o(1)\right)\sqrt n.
+\end{equation}
+The error term depends only on $n$, not on the diameter or additive
+structure of $A$. The same lower bound holds for finite subsets of
+$\R^N$, uniformly in $N$.
+\end{theorem}
+
+Theorem~\ref{thm:main} is a proved result of this session. It improves the
+specific Bailleul--Riblet bound supplied in the task by a factor of two.
+It is not a proof or a disproof of the conjecture $H(n)\sim\sqrt n$.
+All statements described below as obstructions concern specified methods;
+none supplies an asymptotic counterexample to that conjecture.
+
+The finite arithmetic checks accompanying this report corroborate the
+constructions and conventions. No universal or asymptotic assertion in
+the main proof depends on a numerical experiment.
+
+\section{Literature audit and quantitative comparison}
+
+Bailleul--Riblet~\cite{BR}, Lemma~2.3, applies to every finite
+$A\subset\Z$ and every positive integer $m$, with no diameter or density
+restriction. It gives an injective Freiman $2$-homomorphism on a subset of
+size at least $n/2-n^2/(2m)$. Their proof first obtains the slightly
+stronger subtraction $\binom n2/m$. Its Freiman implication preserves
+existing equalities; it is not asserted to reflect all equalities. Taking
+a ceiling costs nothing. Theorem~2.2 optimizes at $m\sim3n$.
+Their Lemma~2.5 uses Singer's covering; translating one Singer set gives
+the slightly stronger exact intersection average $(q+1)|C|/m$ used here.
+
+The starting paper's theorem is verified, but its description as the best
+available universal constant cannot be adopted without qualification.
+Ruzsa~\cite{RuzsaII}, Theorem~4.4, gives $r'(N)\ge4r(N)/(S^2+4)$ for
+translation-invariant integral systems with maximum row $\ell^1$ norm
+$S$, allowing specified coincidence patterns. With the row
+$(1,1,-1,-1)$ and all nontrivial Sidon coincidence patterns, $S=4$,
+$r'(N)=H(N)$, and $r(N)$ is the interval Sidon extremum. Thus that
+theorem implies the stronger prior consequence
+$H(N)\ge(1/5+o(1))\sqrt N$. A direct check is given below.
+Ruzsa already uses a common affine shift and occupied intervals; the
+randomization mechanism is not claimed as new here.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Source or deduction & Constant multiplying $\sqrt n$ & Status\\
+\midrule
+Bailleul--Riblet, Theorem 2.2 & $1/(3\sqrt3)=0.192450\ldots$ & Verified source statement\\
+Ruzsa, Theorem 4.4, Sidon specialization & $1/5=0.2$ & Verified older consequence\\
+Optimized interval-template argument & $\sqrt2/(3\sqrt3)=0.272166\ldots$ & Derived in this audit\\
+Theorem~\ref{thm:main} & $2/(3\sqrt3)=0.384900\ldots$ & Proved here\\
+Erd\H{o}s's conjecture & $1$ & Unresolved here\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A bounded search through 3 October 2026 found no subsequent primary source
+stating the universal $0.384900\ldots$ constant. Huber's August 2026
+paper~\cite{Huber} still quotes the Bailleul--Riblet benchmark for arbitrary
+integer sets; its other constants concern a particular multinomial
+family. Pach--Zakharov~\cite{PZ}, Proposition~2, is a close predecessor for
+random floor compression. Results for intervals, weak Sidon ambient
+sets, squares, or other restricted families are not substitutes for a
+universal statement about $H(n)$. This bounded search is not a novelty
+certificate. The complete text of Ruzsa's 2006 paper on additive and
+multiplicative Sidon sets~\cite{Ruzsa2006} was not obtained, which is
+an additional limit of this priority check.
+
+One unresolved bibliographical point is recorded rather than silently
+used: Green's exercise sheet~\cite{Green}, Question~7, states a large
+subset admitting an injective Freiman $s$-homomorphism into $[n]$, but
+provides no proof. Its literal $n/(2s)$ bound was not independently
+reconstructed in this session. No theorem in this report relies on it.
+
+\subsection{Direct verification of the older transfer and its optimization}
+
+Let $D\subseteq\{1,\ldots,M\}$ be nonempty and Sidon, with $d=|D|$, and put
+\[
+J_y=\left(\frac{y-1/4}{2M},\frac{y+1/4}{2M}\right)
+\quad(y\in D),\qquad \ell=|J_y|=\frac1{4M}.
+\]
+Project an arbitrary $n$-element integer set by $a\mapsto\{a\theta+t\}$,
+and keep one source point for each occupied $J_y$. This always gives a
+Sidon set. Indeed, in a source equality write each circle image as
+$(y_i+e_i)/(2M)$ with $|e_i|<1/4$. The integer
+$y_1+y_2-y_3-y_4$ differs from a multiple of $2M$ by less than one,
+so it equals that multiple. Its absolute value is at most $2(M-1)$,
+so it is zero. The Sidon property of $D$ and the chosen distinct
+representatives then trivialize the original equality.
+
+Let $X$ be total hits, $Z$ the sum of squared occupancies and $Y$ the
+number of occupied arcs. The two-point averaging proved in
+Lemma~\ref{lem:pair} gives
+\[
+\E X=nd\ell,\qquad \E Z=nd\ell+n(n-1)d\ell^2.
+\]
+Pointwise $X\le\sqrt{YZ}$, and Cauchy--Schwarz on the parameter space
+therefore implies
+\[
+\E Y\ge\frac{(\E X)^2}{\E Z}
+=\frac{nd\ell}{1+(n-1)\ell}.
+\]
+For $M=n$ this is at least $d/5$, independently verifying the Sidon
+specialization of Ruzsa's theorem, including repeated summands.
+
+The interval construction $d\ge(1+o(1))\sqrt M$ used here follows
+already from Lemma~\ref{lem:singer}: choose the largest prime
+$q\le\sqrt M-1$, so $q=(1+o(1))\sqrt M$ and $q^2+q+1\le M$,
+and take integer representatives of its Singer set. The prime number
+theorem implies that every fixed relative interval below a sufficiently
+large real number contains a prime, which proves the asserted ratio.
+An integer equality
+implies an equality modulo the Singer modulus, so the representatives
+are Sidon as integers.
+
+The elementary occupied-cell inequality used in
+Theorem~\ref{thm:compression} gives the better estimate
+\[
+\E Y\ge d\left(\frac n{4M}-\frac{n(n-1)}{32M^2}\right).
+\]
+For $M\sim\beta n$ its coefficient of $\sqrt n$ is
+$1/(4\sqrt\beta)-1/(32\beta^{3/2})$.
+Its derivative is $(3-8\beta)/(64\beta^{5/2})$, giving the maximum
+$\sqrt2/(3\sqrt3)$ at $\beta=3/8$.
+This optimized consequence is a calculation in this audit, not an
+explicit constant attributed to Ruzsa's paper. The cyclic target below
+removes the factor lost in fitting the interval template without wraparound.
+
+\section{Exact affine compression}
+
+A Freiman $2$-homomorphism $\phi:C\to G$ satisfies
+$a+b=c+d\Rightarrow\phi(a)+\phi(b)=\phi(c)+\phi(d)$ for all entries
+in $C$. Injectivity is a separate condition.
+
+\begin{lemma}[Two-point averaging]\label{lem:pair}
+Let $a\ne b$ be integers, and let $\theta,t$ be independent uniform
+points of $[0,1)$. The pair
+\[
+\bigl(\{a\theta+t\},\{b\theta+t\}\bigr)
+\]
+is uniform on $[0,1)^2$.
+\end{lemma}
+\begin{proof}
+For each fixed $\theta$, $X=\{a\theta+t\}$ is uniform, so $X$ is
+independent of $\theta$. The variable $W=\{(b-a)\theta\}$ is uniform:
+multiplication by the nonzero integer $b-a$ preserves Lebesgue measure
+on the circle, as can be checked by splitting $[0,1)$ into $|b-a|$
+equal intervals. Hence $X,W$ are independent uniform circle points.
+The second displayed coordinate is $X+W$ modulo one, which, conditional
+on $X$, is uniform. This proves the assertion.
+\end{proof}
+
+\begin{theorem}[Affine compression replacement]\label{thm:compression}
+Let $A\subset\Z$ have cardinality $n$, let $m\ge1$ be an integer, and
+let $0<\delta\le1/2$. There are $C\subseteq A$ and an injective Freiman
+$2$-homomorphism $C\to\Z/m\Z$ with
+\begin{equation}\label{eq:compression}
+|C|\ge\ceil{\delta n-\frac{\delta^2 n(n-1)}{2m}}.
+\end{equation}
+In particular, $|C|\ge\ceil{n/2-n(n-1)/(8m)}$ is always possible.
+\end{theorem}
+\begin{proof}
+Choose $\theta,t$ as in Lemma~\ref{lem:pair}. For every $a\in A$ write
+\[
+m(a\theta+t)=L_a+e_a,\qquad L_a\in\Z,\quad0\le e_a<1,
+\]
+and define
+\[
+B=\{a\in A:0\le e_a<\delta\},\qquad
+\phi(a)=L_a\pmod m\quad(a\in B).
+\]
+Suppose $a+b=c+d$ in $B$, allowing repeated entries. The common affine
+term appears twice on each side, and therefore cancels. Consequently
+\[
+L_a+L_b-L_c-L_d=-(e_a+e_b-e_c-e_d).
+\]
+The left side is an integer. Both residual sums lie in $[0,2\delta)$,
+so their difference lies strictly between $-1$ and $1$, including at
+$\delta=1/2$. The integer is zero. Thus $\phi$ preserves the required
+equalities, first over the integers and hence modulo $m$.
+
+Every point is retained with probability $\delta$, including $a=0$.
+For $j=0,\ldots,m-1$ put
+\[
+I_j=\left[\frac j m,\frac{j+\delta}{m}\right).
+\]
+A pair of distinct points $a,b$ is retained in the same $\phi$-fiber
+exactly when their circle images lie in the same $I_j$.
+Lemma~\ref{lem:pair} therefore gives the exact probability
+\begin{equation}\label{eq:pair-collision}
+\Prob(a,b\in B,\ \phi(a)=\phi(b))
+=\sum_{j=0}^{m-1}|I_j|^2=\frac{\delta^2}{m}.
+\end{equation}
+
+Let $r_j$ be the number of retained points in fiber $j$. Keep one point
+from each nonempty fiber to form $C$. This makes the restriction
+injective, and does not destroy preservation of equalities. For every
+integer $r\ge0$,
+\[
+\mathbf1_{r>0}\ge r-\binom r2:
+\]
+for $r\ge1$ the difference is $(r-1)(r-2)/2\ge0$, and $r=0$ is
+immediate. Hence
+\[
+|C|\ge |B|-\sum_j\binom{r_j}{2}.
+\]
+Taking expectations and using~\eqref{eq:pair-collision} gives
+\[
+\E|C|\ge\delta n-\binom n2\frac{\delta^2}{m}.
+\]
+The integer-valued variable $|C|$ takes finitely many values, so some
+choice is at least the ceiling of the right side. This proves the theorem.
+No estimate involves the diameter of $A$.
+\end{proof}
+
+\begin{remark}[The shift must have the correct scale]
+Here $t$ is uniform on $[0,1)$ in $\floor{m(a\theta+t)}$.
+Equivalently, the additive shift in $\floor{am\theta+\tau}$ is uniform
+on $[0,m)$. Taking $\tau$ uniform only on $[0,1)$ does not justify the
+two-point Haar calculation as stated. Also, after the affine shift one
+must use the balanced four-term identity above, rather than asserting
+additivity of $a\mapsto\phi(a)$ on arbitrary sums.
+\end{remark}
+
+\section{Singer extraction and the optimized constant}
+
+\begin{lemma}[Pullback through an injective forward map]\label{lem:pullback}
+If $\phi:C\to\Z/m\Z$ is injective and is a Freiman $2$-homomorphism,
+and $D\subseteq\Z/m\Z$ is Sidon, then $C$ contains a Sidon subset of
+size at least $\ceil{|C||D|/m}$.
+\end{lemma}
+\begin{proof}
+Average $|\phi(C)\cap(D+u)|$ over all $u\in\Z/m\Z$. Each point of
+$\phi(C)$ is counted $|D|$ times, so some intersection has size at least
+$|C||D|/m$. Pull it back to $S\subset C$. Any original equality in $S$
+maps, in the forward direction, to an equality in $D+u$. Its two image
+multisets agree by the Sidon property. Injectivity then makes the
+original multisets agree. This includes equal summands and uses no
+reflection of additive equalities.
+\end{proof}
+
+For completeness, the finite-geometric input is proved here in its
+usual trace form, rather than relying on a covering assertion.
+
+\begin{lemma}[Singer]\label{lem:singer}
+For every prime power $q$, the cyclic group of order $m=q^2+q+1$
+contains a Sidon set of size $q+1$.
+\end{lemma}
+\begin{proof}
+Let $K=\F_{q^3}$ and $F=\F_q$. The quotient $K^*/F^*$ is cyclic of
+order $m$. Define $\Tr(x)=x+x^q+x^{q^2}$. This is a nonzero
+$F$-linear map $K\to F$: the displayed nonzero polynomial has degree
+$q^2<q^3$, so cannot vanish on all of $K$. Its kernel has $q^2$ elements.
+The nonzero elements of this kernel are a union of multiplicative
+$F^*$-classes. Thus
+\[
+D=\{xF^*:x\ne0,\ \Tr(x)=0\}
+\]
+has cardinality $(q^2-1)/(q-1)=q+1$.
+
+For $\gamma F^*\ne F^*$, the forms $x\mapsto\Tr(x)$ and
+$x\mapsto\Tr(\gamma^{-1}x)$ are independent. Indeed, if the second
+were $c$ times the first, then
+$\Tr((\gamma^{-1}-c)x)=0$ for every $x$. If $\gamma^{-1}-c\ne0$,
+multiplication by this element is a bijection of $K$, contradicting
+nonvanishing of the trace. Thus $\gamma^{-1}=c\in F$, a contradiction.
+The two kernels consequently intersect in a one-dimensional $F$-space.
+Their nonzero intersection gives exactly one multiplicative $F^*$-class.
+It follows that every nonidentity element of $K^*/F^*$ occurs exactly
+once as an ordered difference of two distinct members of $D$, in
+additive notation for the cyclic quotient.
+
+Finally, if $x+y=z+w$ with $x,y,z,w\in D$, then either $x=z$, giving
+$y=w$, or $x-z=w-y$ is a nonzero difference. Its uniqueness gives
+$(x,z)=(w,y)$. This is exactly the Sidon assertion, including the
+diagonal cases.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main} over $\Z$]
+Apply Theorem~\ref{thm:compression} with $\delta=1/2$, followed by
+Lemmas~\ref{lem:singer} and~\ref{lem:pullback}. This proves the exact
+finite bound~\eqref{eq:finite-bound}.
+
+For a fixed $\beta>1/4$, choose primes
+$q=(1+o(1))\sqrt{\beta n}$. Such choices exist by the prime number
+theorem: for every fixed $\eta>0$, the interval $[x,(1+\eta)x]$
+contains a prime for all sufficiently large $x$; consequently the least
+prime above $x$ has ratio tending to one. Thus
+\[
+m=q^2+q+1=(\beta+o(1))n,\qquad
+\frac{q+1}{m}=\frac{1+o(1)}{\sqrt{\beta n}}.
+\]
+The resulting coefficient of $\sqrt n$ is
+\[
+f(\beta)=\frac{1/2-1/(8\beta)}{\sqrt\beta}
+=\frac{4\beta-1}{8\beta^{3/2}}.
+\]
+Its derivative is $(3-4\beta)/(16\beta^{5/2})$, so its maximum occurs
+at $\beta=3/4$ and equals $2/(3\sqrt3)$.
+At this choice the retained fraction tends to $1/3$.
+Ceilings affect only bounded additive terms before extraction. All
+choices depend on $n$ alone, giving the claimed uniformity.
+\end{proof}
+
+\begin{lemma}[Transfer from real configurations]\label{lem:real}
+Every finite subset of $\R^N$ admits an injective, additive-relation
+preserving map into $\Z$.
+\end{lemma}
+\begin{proof}
+Take a basis over $\Q$ of the finite-dimensional rational span of the
+given points. Express all points in this basis and clear a common
+denominator; this gives integer vectors $v_1,\ldots,v_n\in\Z^d$,
+with all original additive equalities preserved and distinct points
+remaining distinct. For each nonzero difference $v_i-v_j$, the polynomial
+$\sum_{r=1}^d(v_{i,r}-v_{j,r})X^{r-1}$ is nonzero and has finitely many
+integer roots. Choose an integer $M$ outside the union of these finite
+root sets. The linear map $v\mapsto\sum_r v_rM^{r-1}$ is then injective
+on the points and preserves every additive equality. Pulling back a
+Sidon subset of its image proves the remaining assertion of
+Theorem~\ref{thm:main}. There is no dimension-dependent loss.
+\end{proof}
+
+\section{Weighted and balanced-equation forms}
+
+\begin{theorem}[Uniform marginal guarantee]\label{thm:weighted}
+Under the hypotheses of Theorem~\ref{thm:compression}, let
+$D\subseteq\Z/m\Z$ be Sidon. There is a probability distribution on
+Sidon subsets $S\subseteq A$ for which every $a\in A$ satisfies
+\begin{equation}\label{eq:marginal}
+\Prob(a\in S)\ge\frac{|D|}{m}
+\left(\delta-\frac{(n-1)\delta^2}{2m}\right).
+\end{equation}
+In particular, for arbitrary nonnegative weights $w_a$, some Sidon
+subset has at least this fraction of the total weight. With the
+optimized Singer parameters, this fraction is
+$(2/(3\sqrt3)+o(1))/\sqrt n$, uniformly over all weight assignments.
+\end{theorem}
+\begin{proof}
+Use the affine parameters from the compression proof and assign the
+points independent continuous random priorities. Keep the lowest-priority
+point in each retained fiber. If a retained point $a$ is discarded,
+some $b\ne a$ occupies its retained fiber and precedes it. For each
+competitor this has probability $\delta^2/(2m)$, by
+\eqref{eq:pair-collision} and independence of priorities. A union bound
+therefore gives
+\[
+\Prob(a\in C)\ge\delta-\frac{(n-1)\delta^2}{2m}.
+\]
+Choose independently a uniform translate $D+u$ and take its pullback
+inside $C$. Conditional on $C,\phi$, a fixed surviving point belongs
+to the pullback with probability $|D|/m$. The pullback is always Sidon
+by Lemma~\ref{lem:pullback}, proving~\eqref{eq:marginal}. Multiply by
+$w_a$, sum, and take expectations. The distribution itself is independent
+of the weights.
+\end{proof}
+
+Dividing the finitely many output-subset probabilities by a positive
+lower bound in~\eqref{eq:marginal} gives a fractional cover of $A$ by
+Sidon subsets: the weights of sets containing any point sum to at least
+one. Its total weight is at most
+$(3\sqrt3/2+o(1))\sqrt n$.
+
+\begin{proposition}[Balanced equations]\label{prop:balanced}
+Let $h\ge2$ be an integer. The same construction gives an injective
+Freiman $h$-homomorphism from a subset of every $n$-element integer set
+into $\Z/m\Z$, of cardinality at least
+\[
+\ceil{\frac n h-\frac{n(n-1)}{2h^2m}}.
+\]
+More generally it preserves every balanced integral equation whose
+positive coefficient sum is at most $h$, with its variables in the
+retained subset.
+\end{proposition}
+\begin{proof}
+Set $\delta=1/h$. In a balanced equation the affine shifts cancel.
+The positive and negative weighted sums of fractional remainders each
+belong to $[0,1)$, since the positive and negative coefficient sums
+are equal and at most $h$. Their difference is an integer strictly
+between $-1$ and $1$. The collision calculation is unchanged and gives
+the stated cardinality. Repeated variables simply contribute their
+integer multiplicities to this calculation.
+\end{proof}
+
+The application justifying this replacement is
+Theorem~\ref{thm:main}, with all its losses already accounted for.
+The broader balanced-equation wording is not being presented as a
+separate improvement without an extremal target construction.
+
+\subsection{A quantitative surplus for progression-rich sets}
+
+\begin{theorem}[Progression-sensitive compression]\label{thm:ap-surplus}
+For a finite integer set $A$, let $T(A)$ count its nontrivial three-term
+arithmetic progressions, each counted once as $a<b<c$ with $a+c=2b$.
+For $n=|A|$, $m\ge1$, and $0<\delta\le1/2$, there is a subset
+$C\subset A$ and an injective Freiman $2$-homomorphism
+$C\to\Z/m\Z$ with
+\[
+|C|\ge\left\lceil\delta n-
+\frac{\delta^2}{2m}\bigl(n(n-1)-T(A)\bigr)\right\rceil.
+\]
+Consequently, for any fixed $0\le\tau\le1/4$, families satisfying
+$T(A)\ge(\tau+o(1))n^2$ have Sidon subsets of size at least
+\[
+\left(\frac{2}{3\sqrt{3(1-\tau)}}+o(1)\right)\sqrt n.
+\]
+\end{theorem}
+\begin{proof}
+Use the affine phases and retained cells of
+Theorem~\ref{thm:compression}. Let $k_j$ count points in retained cell
+$j$, and let $O$ count occupied cells. The exact identity
+\[
+O=\sum_j k_j-\sum_j\binom{k_j}{2}+\sum_j z(k_j),
+\qquad z(0)=0,\quad z(k)=\frac{(k-1)(k-2)}2\ (k\ge1),
+\]
+exhibits the slack in pair deletion. A set of $k$ distinct integers
+has at most
+\[
+\sum_{i=0}^{k-1}\min(i,k-1-i)
+=\left\lfloor\frac{(k-1)^2}{4}\right\rfloor
+\]
+three-term progressions: each endpoint on one side of a specified
+midpoint determines the endpoint on its other side. For $k\ge3$ this
+bound is at most $z(k)$; for $k\le2$ both relevant quantities vanish.
+Thus $\sum_jz(k_j)$ is at least the number of source progressions
+contained in individual retained cells.
+
+For a fixed progression $a,a+d,a+2d$ with $d>0$, put
+$X=\{a\theta+t\}$ and $V=\{d\theta\}$. These are independent
+uniform circle points, by the same argument as Lemma~\ref{lem:pair}.
+The endpoint phases are $X,Y=X+2V$. Conditional on $X,Y$, the variable
+$V$ is uniform among its two possible roots; hence the middle phase
+$X+V$ is uniform among the two roots of $2z=X+Y$.
+This argument works for every positive integer $d$.
+For any arc of length $\epsilon\le1/2$, when both endpoints lie in
+it their lifted midpoint is in the arc and its half-turn translate
+is outside, apart from null boundaries. Therefore the three-hit
+probability for this arc is exactly $\epsilon^2/2$.
+Taking $\epsilon=\delta/m$ and summing the $m$ retained cells gives
+probability $\delta^2/(2m)$ for each progression. Pairwise independence
+now yields
+\[
+\E O\ge\delta n-\binom n2\frac{\delta^2}{m}
++T(A)\frac{\delta^2}{2m}.
+\]
+Choose parameters attaining at least the ceiling of this average and
+keep one point per occupied cell. The Freiman implication, including
+diagonals, follows from the same residual-integer calculation as in
+Theorem~\ref{thm:compression}.
+
+For the Sidon assertion take $\delta=1/2$ and Singer moduli
+$m\sim3(1-\tau)n/4$, available by prime asymptotics. Translating and
+averaging the Singer set gives the coefficient
+\[
+\max_{\beta>0}
+\frac{1/2-(1-\tau)/(8\beta)}{\sqrt\beta}
+=\frac{2}{3\sqrt{3(1-\tau)}}.
+\]
+All estimates depend on $n,T(A),m$ alone, independently of diameter.
+\end{proof}
+
+This is a strict improvement over the universal bound when $\tau>0$,
+but does not settle the progression-sparse branch. For intervals,
+$T(A)=\lfloor(n-1)^2/4\rfloor$, and the coefficient furnished by this
+argument is $4/9$; stronger interval results were already known.
+Boundedly many separated long interval clusters also have a positive
+progression density. The claim is a uniform bound for the stated
+class, not a new universal coefficient or a claimed novelty result.
+
+\begin{proposition}[Local progression-sensitive marginals]\label{prop:weighted-ap}
+Let $A\subset\Z$ have $n$ elements, let $m\ge1$ be an integer,
+and let $T_a(A)$ count the nontrivial three-term progressions in $A$
+containing $a$. For $0<\delta\le1/2$, there is a weight-independent
+distribution on subsets $C$ admitting injective Freiman
+$2$-homomorphisms $C\to\Z/m\Z$, such that every $a\in A$ satisfies
+\[
+\Prob(a\in C)\ge\delta-
+\frac{\delta^2}{2m}\left(n-1-\frac13T_a(A)\right).
+\]
+If $m=q^2+q+1$, a subsequent independent uniform Singer translate
+gives a Sidon subset $S$ with each of these lower bounds multiplied
+by $(q+1)/m$. Thus for nonnegative weights $w_a$, writing
+$W=\sum_a w_a$, some such $S$ satisfies
+\[
+\sum_{a\in S}w_a\ge\frac{q+1}{m}
+\left[\delta W-\frac{\delta^2}{2m}
+\left((n-1)W-\frac13\sum_a w_aT_a(A)\right)\right].
+\]
+The distribution of $S$ does not depend on the weights.
+\end{proposition}
+\begin{proof}
+We construct a representative distribution for each retained cell $F$
+of size $r$. Let $d_a$ count its progressions through $a$. Define
+\[
+L_a=\max\left\{0,\frac{3-r}{2}+\frac{d_a}{3}\right\}.
+\]
+We claim $\sum_aL_a\le1$. For $r=1,2$ the demands are respectively
+$1$ and $1/2$. For $r\ge3$, translate $a$ to zero. Every progression
+through it is a doubling edge $x,2x$ or an opposite pair $x,-x$ among
+the other differences. Doubling edges form a forest within each sign;
+opposite pairs form a matching. If $a$ has increasing rank $i$, starting
+at zero, this gives
+\[
+d_a\le r-3+\min(i,r-1-i)\quad(0<i<r-1),\qquad
+d_a\le r-2\quad(i=0,r-1).
+\]
+For $r=3$ every demand is at most $1/3$; for $r=4$ every demand is at
+most $1/6$. For $r\ge5$ the endpoint demands vanish, and interior
+demands satisfy
+\[
+L_a\le\max\left\{0,\frac{3-r+2\min(i,r-1-i)}6\right\}.
+\]
+For odd $r$, only the median can have positive demand, at most $1/3$.
+For even $r$, only the two central ranks can, each at most $1/6$.
+The claim follows. Choose one representative with probabilities
+$p_a=L_a+(1-\sum_{b\in F}L_b)/r$. This depends on $F$, not on the
+weights, and gives $p_a\ge1-(r-1)/2+d_a/3$.
+
+Multiply the conditional inequality by the indicator that $a$ is
+retained and average. Each other point shares its retained cell with
+probability $\delta^2/m$. Each progression through $a$ lies in one
+retained cell with probability $\delta^2/(2m)$, as proved in
+Theorem~\ref{thm:ap-surplus}. This proves the marginal estimate.
+An independent Singer translate multiplies all marginals by
+$(q+1)/m$. Multiplication by $w_a$ and summation prove the weighted
+claim. All source equalities and diagonals are preserved by the same
+compression map already constructed. The coefficient $1/3$ is optimal
+for this pointwise comparison: in a cell consisting of a three-term
+progression, $r=3$ and all three degrees are one, so a coefficient $c$
+would require three probabilities at least $c$, forcing $c\le1/3$.
+\end{proof}
+
+For example, if a fixed $0\le\eta\le3/4$ satisfies
+$T_a(A)\ge(\eta+o(1))n$ uniformly in $a$, optimizing
+at $\delta=1/2$ and $m\sim3(1-\eta/3)n/4$ gives a distribution of
+Sidon subsets with every marginal at least
+\[
+\left(\frac{2}{3\sqrt{3(1-\eta/3)}}+o(1)\right)n^{-1/2}.
+\]
+This requires the stated local progression hypothesis. Summing the
+marginals counts each progression three times and recovers the full
+$T(A)$ correction of Theorem~\ref{thm:ap-surplus}.
+
+\section{Relation to the no-unique-sum manuscript}
+
+The local manuscript's Proposition \texttt{prop:compression} assumes an
+inclusion-minimal no-unique-sum set in $\Z/p\Z$ of minimum size $n(p)$.
+It produces a primitive sublattice of the collision lattice, with free
+quotient rank $O(\sqrt{n(p)}+n(p)/\log p)$ and polynomially bounded
+coordinates in one quotient basis. Its proof obtains departing
+relations from small block rectangles, contracts forests using unit
+pivots, and retains residual relations. This report checked those
+hypotheses and the mechanism; it does not use its quantitative conclusion
+as an input or certify the full source manuscript theorem.
+
+The original hypothesis cannot hold for a nonempty finite integer set:
+$2\min A$ has a unique unordered representation. A low-dimensional free
+partial quotient, by itself, also does not establish injectivity into
+a small finite group.
+
+Here is the precise character-space interpretation of the replacement.
+Let $L\le\Z^n$ be generated by all actual collision rows
+$e_i+e_j-e_k-e_l$, including diagonal pairs, and let
+$Q=\Z^n/\sat(L)$. This quotient is free abelian. Both augmentation
+$e_i\mapsto1$ and evaluation $e_i\mapsto a_i$ annihilate $\sat(L)$,
+because their target $\Z$ is torsion-free. Thus the point classes
+$v_i$ are distinct, and every pair $v_i,v_j$, $i\ne j$, is rationally
+independent: augmentation gives $r+s=0$ in any relation
+$rv_i+sv_j=0$, and evaluation gives $r(a_i-a_j)=0$.
+
+A uniform character $Q\to\T$ consequently has independent uniform
+values on every two distinct point classes. To check this explicitly,
+choose a basis of $Q$. The two corresponding rows of integers have rank
+two, so the real linear map to $\R^2$ is onto; its torus map is onto and
+pushes Haar measure to Haar measure. All original additive relations
+remain satisfied modulo one. If their chosen real lifts satisfy
+$x_a+x_b-x_c-x_d=k\in\Z$, multiplying by $m$ shows that the
+rounded-label difference equals $mk$ minus the residual-sum difference.
+The latter is an integer in $(-1,1)$, hence zero. Thus half-window
+rounding still preserves the equality modulo $m$, and pair deletion
+gives Theorem~\ref{thm:compression}. In fact, the rank-two
+family $a_i\theta+t$ already provides everything needed for that theorem.
+
+All residual equations must be imposed. A primitive partial quotient
+$\Z^n/P$ with $P\subset L$ allows characters that violate the remaining
+rows, so cannot replace $Q$ without further work. Saturation is harmless
+for this integer application because augmentation and separating integer
+evaluation descend through it. It would generally destroy the modular
+rank defect sought in the original no-unique-sum problem, so this is an
+application-specific replacement, not a torsion-preserving upgrade of
+the original method.
+
+% Fragment for sidon_research_report.tex. No independent preamble.
+% Uses the main report's theorem environments and \Z,\F,\sat,\ceil macros.
+\section{Exact homomorphisms: a useful criterion and a sharp structural warning}
+\label{sec:content-hashing}
+
+This section gives a conditional route to the larger coefficient
+$2\sqrt2/(3\sqrt3)=0.544331\ldots$, followed by a proved obstruction to
+making its hypotheses universal through the full relation group alone.
+The criterion is an application-specific replacement for an elimination
+lemma, not a claim that the supplied no-unique-sum manuscript establishes
+it. No novelty claim is made for the restricted-class bound.
+
+\subsection{Contents in the complete Freiman quotient}
+
+Let $A=\{a_1,\ldots,a_n\}\subset\Z$, and let $L_A\le\Z^n$ be generated
+by every actual relation row
+\[
+e_i+e_j-e_k-e_l\qquad(a_i+a_j=a_k+a_l),
+\]
+including rows with repeated indices. Set
+\[
+Q_A=\Z^n/\sat(L_A),\qquad
+\sat(L_A)=\{x\in\Z^n:rx\in L_A\text{ for some }r\ge1\},
+\]
+and write $v_i$ for the class of $e_i$. This is a free abelian group.
+The maps $e_i\mapsto1$ and $e_i\mapsto a_i$ annihilate the saturation:
+they annihilate $L_A$ and take values in the torsion-free group $\Z$.
+In particular the $v_i$ are distinct.
+For nonzero $w\in Q_A$, define its \emph{content} $c(w)$ to be the
+largest positive integer $c$ with $w\in cQ_A$. In any integral basis it
+is the gcd of the coordinates, so it is independent of the basis.
+
+\begin{lemma}[Exact content hashing]\label{lem:content-hash}
+For every integer $m\ge1$, put $c_{ij}=c(v_i-v_j)$. There exist
+$C\subseteq A$ and an injective Freiman $2$-homomorphism
+$C\to\Z/m\Z$ such that
+\begin{equation}\label{eq:content-bound}
+|C|\ge\ceil{n-\frac1m\sum_{i<j}\gcd(c_{ij},m)}.
+\end{equation}
+\end{lemma}
+\begin{proof}
+Send the members of a basis of $Q_A$ independently and uniformly into
+$\Z/m\Z$, obtaining a random homomorphism $h$. For an integer coordinate
+vector $(w_1,\ldots,w_r)$, the image $h(w)$ is uniform on the subgroup
+it generates modulo $m$. That subgroup consists of the multiples of
+$g=\gcd(w_1,\ldots,w_r,m)=\gcd(c(w),m)$ and has size $m/g$.
+Thus
+\[
+\Prob(h(v_i)=h(v_j))=\frac{\gcd(c_{ij},m)}m.
+\]
+The expected number of colliding unordered pairs is the sum in
+\eqref{eq:content-bound} divided by $m$. Keeping one member of each
+nonempty fiber discards $k-1\le\binom k2$ points from a fiber of size
+$k$. Some $h$ therefore admits the required injective restriction.
+Every source equality is preserved because $h$ annihilates $L_A$.
+The ceiling follows from integrality.
+\end{proof}
+
+If every $c_{ij}$ is coprime to $m$, this gives
+$|C|\ge\ceil{n-n(n-1)/(2m)}$. For Singer moduli $m\sim\beta n$,
+translation averaging then gives coefficient
+\[
+\frac{1-1/(2\beta)}{\sqrt\beta},
+\]
+whose maximum, at $\beta=3/2$, is $2\sqrt2/(3\sqrt3)$.
+More generally, for fixed $\epsilon\ge0$, if suitable Singer moduli satisfy
+\[
+\sum_{i<j}(\gcd(c_{ij},m)-1)\le(\epsilon+o(1))n^2,
+\qquad m\sim\frac{3(1+2\epsilon)}2n,
+\]
+the same calculation gives coefficient
+\[
+\frac{2\sqrt2}{3\sqrt3\sqrt{1+2\epsilon}}.
+\]
+The existence of these moduli with the indicated content control is a
+hypothesis, not a conclusion. Merely bounding the \emph{number} of
+nonprimitive pairs by $\epsilon n^2$ is insufficient: an individual
+bad pair can collide with probability one.
+
+\subsection{A finite-field formulation retaining residual arithmetic}
+
+For an odd prime $p$, use instead the full modular relation space
+\[
+V_p=\F_p^n/\operatorname{span}_{\F_p}
+\{e_i+e_j-e_k-e_l:a_i+a_j=a_k+a_l\},
+\]
+with point classes $u_i$. Here the integral relation lattice is
+\emph{not} saturated before reduction. Thus possible $p$-torsion and
+modular rank drops are retained.
+
+\begin{proposition}[Modular separation criterion]\label{prop:modular-separation}
+If the classes $u_1,\ldots,u_n$ are distinct, then
+\begin{equation}\label{eq:field-bound}
+s(A)\ge\ceil{\frac np-\frac{n(n-1)}{2p^3}}.
+\end{equation}
+Consequently, if this hypothesis holds along primes
+$p\sim\sqrt{3n/2}$, then
+\[
+s(A)\ge\left(\frac{2\sqrt2}{3\sqrt3}+o(1)\right)\sqrt n.
+\]
+\end{proposition}
+\begin{proof}
+A uniformly random linear map $h:V_p\to\F_p^2$ sends each nonzero
+$u_i-u_j$ uniformly into $\F_p^2$. The pair collision probability is
+therefore $p^{-2}$. Keeping one point per image, as in
+Lemma~\ref{lem:content-hash}, gives an injectively mapped subset $C$
+with $|C|\ge n-n(n-1)/(2p^2)$, preserving every source equality.
+
+The parabola
+\[
+S=\{(x,x^2):x\in\F_p\}\subset\F_p^2
+\]
+is a strict Sidon set of size $p$. Equality of two pair sums gives
+$x+y=z+w$ and $x^2+y^2=z^2+w^2$. Since $2$ is invertible, it also gives
+$xy=zw$. The two unordered pairs, with multiplicity, are the roots of
+the same monic quadratic and hence agree. This includes repeated
+summands. Averaging all translates of $S$ gives a translate meeting
+$h(C)$ in at least $|C|/p$ points. Its preimage is Sidon by the forward
+Freiman implication and injectivity. This proves
+\eqref{eq:field-bound}. Writing $p\sim t\sqrt n$, the coefficient is
+$t^{-1}-(2t^3)^{-1}$, maximized at $t=\sqrt{3/2}$.
+\end{proof}
+
+\begin{corollary}[Box models]\label{cor:box-model}
+Suppose $A$ has an injective Freiman $2$-homomorphism into
+$\{0,\ldots,K\}^d$, with arbitrary $d$.
+For each odd prime $p>K$, the bound~\eqref{eq:field-bound} holds.
+For each fixed $\eta>0$,
+the coefficient $2\sqrt2/(3\sqrt3)$ holds uniformly in $d$ whenever
+\[
+K\le\bigl(\sqrt{3/2}-\eta\bigr)\sqrt n.
+\]
+\end{corollary}
+\begin{proof}
+Reducing the coordinate map modulo $p$ preserves all relations and
+remains injective: a nonzero coordinate difference has absolute value
+at most $K<p$. This map factors through $V_p$, so its point classes
+are distinct. Apply Proposition~\ref{prop:modular-separation}.
+The prime number theorem supplies primes $p\sim\sqrt{3n/2}$, which
+exceed $K$ for all sufficiently large $n$ under the displayed condition.
+\end{proof}
+
+For example, any subset of
+$\{\sum_jd_jB^j:0\le d_j\le K\}$, with $B>2K$, has the required digit
+map: two-term digit sums have no carries. The dimension and the integer
+diameter are unrestricted. This is a concrete class to which the
+criterion applies, not a literature-optimality claim for that class.
+If integral elimination instead gives point coordinates in
+$[-H,H]^d$, translating coordinates makes $K=2H$ available. All
+residual equations must still be satisfied; a bounded coordinate list
+in a partial quotient is not sufficient.
+
+If the criterion holds only on a subset of size
+$k=(\alpha+o(1))n$, at primes $p\sim\sqrt{3k/2}$, its coefficient for
+$\sqrt n$ is
+$\frac{2\sqrt2}{3\sqrt3}\sqrt\alpha$. It improves the universal
+$2/(3\sqrt3)$ coefficient precisely when $\alpha>1/2$.
+No decomposition guaranteeing this retention, or treating every
+complementary case, is proved here.
+
+\subsection{Small sets of anchors can force simultaneous collapse}
+
+The next result explains why the complete relation group cannot simply
+be computed once and then projected to various small target groups.
+It is a method obstruction, not a counterexample to the Sidon conjecture.
+
+\begin{theorem}[Simultaneous rigidifier]\label{thm:rigidifier}
+For each $n$, let $\mathcal M_n$ be a finite nonempty family of positive
+integer moduli, and suppose
+\[
+L_n=\operatorname{lcm}(\mathcal M_n),\qquad \log L_n=o(n).
+\]
+For all sufficiently large $n$ there is an integer set $A_n$ of
+\emph{exactly} $n$ points with the following properties.
+Its complete relation lattice is saturated, and its full Freiman group
+is freely generated by two elements $z,w$, with
+\[
+v_a=z+aw\qquad(a\in A_n).
+\]
+The set contains a progression
+\[
+P_n=\{L_n,2L_n,\ldots,N_nL_n\},\qquad N_n=n-o(n).
+\]
+For every $m\in\mathcal M_n$ and every homomorphism
+$h:Q_{A_n}\to\Z/m\Z$, all points of $P_n$ have the same image.
+Every injective restriction of such an $h$ therefore has size
+$O(1+\log L_n)=o(n)$.
+\end{theorem}
+\begin{proof}
+Write $L=L_n$. Begin with $0,1$ and read the binary expansion of $L$
+after its leading digit. From the current integer $x$, include $2x$;
+if the next digit is one, also include $2x+1$, which becomes the new
+current integer. Otherwise $2x$ becomes current. Let $T$ be all points
+so produced, including $0,1$. Then $L\in T$, every other point lies
+in $[0,L)$, and
+\[
+t:=|T|\le2\floor{\log_2 L}+2.
+\]
+For $L=1$ simply use $T=\{0,1\}$. Prescribe
+$N=n-t+1>0$ and set
+\[
+A=T\cup\{L,2L,\ldots,NL\}.
+\]
+The intersection is exactly $\{L\}$, so $|A|=n$ and
+$N=n-o(n)$.
+
+Put $z=e_0$ and $w=e_1-e_0$. The actual chain relations are
+\[
+e_x+e_x=e_{2x}+e_0,
+\qquad e_{2x}+e_1=e_{2x+1}+e_0
+\]
+when the indicated steps occur. They successively force
+$e_t=z+tw$ for all $t\in T$. For $k=2,\ldots,N$, the actual relation
+\[
+e_{(k-1)L}+e_L=e_{kL}+e_0
+\]
+then forces $e_{kL}=z+kLw$.
+
+There is exactly one displayed relation for each generator other than
+$e_0,e_1$. In its construction order each has coefficient $-1$ on its
+new generator and involves only earlier generators otherwise.
+Eliminating these unit pivots leaves the free group on $z,w$, with no
+residual relation. Equivalently, the displayed rows generate the
+kernel of the surjection
+\[
+\Z^A\longrightarrow\Z^2,\qquad e_a\longmapsto(1,a).
+\]
+Every actual additive relation lies in this kernel. Conversely, every
+displayed row is an actual relation. Thus their subgroup is the
+\emph{entire} relation lattice, already saturated, and the claimed
+full quotient follows.
+
+For $m\mid L$, every homomorphism into $\Z/m\Z$ satisfies
+$h(v_{kL})=h(z)+kLh(w)=h(z)$. An injective restriction keeps at most
+one progression point and at most $t-1$ other points. Its size is at
+most $t=O(1+\log L)=o(n)$, as required.
+\end{proof}
+
+The same proof applies to any abelian target whose exponent divides
+$L_n$, including $\F_p^r$ for every $r$ whenever $p\mid L_n$.
+Nevertheless, deleting only $t-1=o(n)$ anchors leaves $P_n$.
+Its \emph{rebuilt} Freiman model is $kL_n\mapsto k$; it embeds into
+$\Z/m\Z$ for $m\ge N_n$ and contains a Sidon subset of size
+$(1+o(1))\sqrt{N_n}$ by the interval construction.
+There is therefore no Sidon obstruction. The failure is specific to
+restricting homomorphisms of the old full quotient after subset selection.
+
+\begin{corollary}[All linear-sized Singer targets]\label{cor:singer-rigidifier}
+Fix $C>0$. There are $n$-element integer sets on which every exact
+homomorphism from the full Freiman group into every Singer cyclic group
+of order at most $Cn$ has injective restrictions of size $o(n)$.
+\end{corollary}
+\begin{proof}
+Use the family $q^2+q+1$ for all integers
+$2\le q\le\floor{\sqrt{Cn}}$, which contains every desired prime-power
+Singer modulus. Its lcm divides the product of these
+$O(\sqrt n)$ integers, each $O(n)$, so its logarithm is
+$O(\sqrt n\log n)=o(n)$. Apply Theorem~\ref{thm:rigidifier}.
+No assertion about prime gaps is needed.
+\end{proof}
+
+\subsection{Every modulus in a prescribed short window}
+
+\begin{lemma}[An interval lcm bound]\label{lem:interval-lcm}
+For integers $M\ge k\ge1$,
+\[
+\operatorname{lcm}(M-k+1,\ldots,M)
+\ \mid\ \binom Mk\operatorname{lcm}(1,\ldots,k).
+\]
+In particular, if $M=O(n)$ and $k=o(n)$, the logarithm of the left
+side is $o(n)$.
+\end{lemma}
+\begin{proof}
+Fix a prime $p$. Let $a$ be the largest $p$-adic valuation among the
+$k$ integers in the interval, and put $b=\floor{\log_p k}$.
+For each $j$, that interval contains at least $\floor{k/p^j}$ multiples
+of $p^j$. For $b<j\le a$ it contains at least one, while
+$\floor{k/p^j}=0$. The factorial formula therefore gives
+$v_p\binom Mk\ge\max(a-b,0)$. Adding the valuation $b$ of
+$\operatorname{lcm}(1,\ldots,k)$ proves the divisibility.
+
+We supply the needed elementary estimate
+$\log\operatorname{lcm}(1,\ldots,k)=O(k)$.
+Let $\psi(x)=\sum_{p^a\le x}\log p$. There is at most one power of
+any fixed prime in $(r,2r]$. Its corresponding term in the factorial
+valuation of $\binom{2r}r$ is one, and all other terms are nonnegative.
+Consequently
+$\psi(2r)-\psi(r)\le\log\binom{2r}r\le2r\log2$.
+Summing over powers of two gives $\psi(k)\le4k\log2$.
+Finally,
+\[
+\log\operatorname{lcm}(M-k+1,\ldots,M)
+\le k\log(eM/k)+O(k)=o(n),
+\]
+since $(k/n)\log(n/k)\to0$.
+\end{proof}
+
+\begin{corollary}[Prescribed short windows]\label{cor:window-rigidifier}
+Fix $\beta>0$ and a prescribed sequence $w_n\ge1$ with $w_n=o(n)$.
+There exist sets $A_n\subset\Z$ of exactly $n$ points such that every
+exact homomorphism from their full Freiman group into $\Z/m\Z$, for
+\emph{every} positive integer $m$ with
+$|m-\beta n|\le w_n$, has injective restrictions of size $o(n)$.
+The same holds for a fixed finite union of such prescribed windows.
+\end{corollary}
+\begin{proof}
+The moduli form an interval of $k\le2w_n+1=o(n)$ consecutive integers
+with largest element $M=O(n)$. Its lcm has logarithm $o(n)$ by
+Lemma~\ref{lem:interval-lcm}. For a fixed finite union, the lcm divides
+the product of the separate lcms and has the same little-$o$ property.
+Apply Theorem~\ref{thm:rigidifier}, which prescribes final size $n$
+\emph{before} choosing the progression length. This avoids any mismatch
+between the center of the modulus window and the constructed set size.
+\end{proof}
+
+The window in this corollary is prescribed. It does not assert that a
+single sequence defeats every possible unspecified rate in $m\sim\beta n$.
+By contrast, Corollary~\ref{cor:singer-rigidifier} covers every Singer
+modulus up to $Cn$, without a rate qualification.
+Neither statement blocks maps from a quotient rebuilt on a subset, or
+the affine rounding construction proved earlier.
+
+The accompanying exact-integer scripts
+\path{research/sidon/scripts/rigidifier_certificate.py} and
+\path{research/sidon/scripts/short_window_certificate.py}
+check finite instances. The first uses $N=64$, moduli $7,13,31$,
+$L=2821$, and $n=80$, and integrally reduces $2041$ generating
+source relations against the unit-pivot basis. The second prescribes
+$n=256$ and every modulus $188\le m\le196$; it has $180$ progression
+points and verifies $16438$ relation generators, as well as all
+$20100$ interval-lcm cases $1\le k\le M\le200$.
+Their JSON outputs are in \texttt{research/sidon/results/}.
+The proofs above, including all asymptotic claims, are independent of
+these computations.
+
+% Fragment for sidon_research_report.tex. No independent preamble.
+\section{A robust obstruction even after rebuilding the quotient}
+\label{sec:robust-cluster-obstruction}
+
+The preceding obstruction concerns homomorphisms inherited from the full
+set. The following construction is stronger in a different direction:
+it allows arbitrary new Freiman maps after deletion, and arbitrary finite
+abelian target groups. Its elementary proof is recorded here without a
+claim of publication novelty.
+
+\begin{theorem}[Robust finite-model obstruction]
+\label{thm:robust-cluster}
+Fix integers $r\ge2$ and $N\ge6$, and put
+\[
+B_r=\{0,\ldots,r-1\}\cup\{r,2r,\ldots,r^2\},\qquad
+A_{r,N}=\{3Nb+x:b\in B_r,\ 0\le x<N\}.
+\]
+Thus $|A_{r,N}|=2rN$. Suppose $C\subseteq A_{r,N}$,
+$|A_{r,N}\setminus C|=K<N$.
+Every Freiman $2$-homomorphism $f:C\to G$ into an abelian group has
+the form
+\[
+f(3Nb+x)=\gamma+b\alpha+x\beta\qquad(3Nb+x\in C)
+\]
+for some $\gamma,\alpha,\beta\in G$. If $f$ is injective and $G$ is
+finite, then
+\begin{equation}\label{eq:robust-cluster-order}
+|G|\ge(r^2+1)(N-K).
+\end{equation}
+For $K=0$, equality is attained by a cyclic target group.
+The condition $K<N$ for the affine-rigidity conclusion is sharp:
+at $K=N$ that conclusion can fail, even for $G=\Z$.
+\end{theorem}
+
+\begin{lemma}[Affine rigidity of a dense interval]
+\label{lem:dense-interval-affine}
+Let $S\subseteq\{0,\ldots,N-1\}$ omit $k$ points, where $N\ge3k+3$.
+Every Freiman $2$-homomorphism $f:S\to G$ into any abelian group is
+of the form $f(x)=t+x\beta$ on $S$. The threshold is sharp for each
+$k\ge1$: at $N=3k+2$ this conclusion can fail.
+\end{lemma}
+\begin{proof}
+If $d\ge0$ occurs as a difference of two points of $S$, the increment
+\[
+g(d)=f(x+d)-f(x)
+\]
+is independent of the choice of $x$: the equality
+$(x+d)+y=x+(y+d)$ equates any two such increments.
+When $k=0$, consecutive increments immediately prove the assertion.
+Otherwise let $M=\{0,\ldots,N-1\}\setminus S$, and let $g_0\ge1$
+be the length of a longest consecutive run in $M$. For
+$0\le d\le g_0$, a starting integer $x$ fails one of the conditions
+$x,x+d,x+d+1\in S$ only if it belongs to
+\[
+M\cup(M-d)\cup(M-d-1).
+\]
+The last two sets overlap in at least $g_0-1$ points, using two
+unit translates of a longest missing run. Their union with $M$
+therefore has cardinality at most $3k-g_0+1$.
+There are $N-d-1\ge N-g_0-1\ge3k-g_0+2$ candidate starts with
+$0\le x$ and $x+d+1<N$, so a valid triple exists.
+It gives $g(d+1)=g(d)+g(1)$. Induction yields
+$g(d)=d\beta$ for all $0\le d\le g_0+1$, where $\beta=g(1)$.
+Every consecutive gap in $S$ is at most $g_0+1$.
+Telescoping along these gaps gives
+$f(y)-f(x)=(y-x)\beta$ for arbitrary $x,y\in S$.
+Choosing a base point gives the asserted affine formula.
+No division in $G$ was used.
+
+For sharpness, let $k\ge1$, $N=3k+2$, and
+$S=\{0,\ldots,k\}\cup\{2k+1,\ldots,3k+1\}$.
+Its pair sums with zero, one, or two summands in the second block
+lie respectively in the disjoint intervals
+$[0,2k]$, $[2k+1,4k+1]$, and $[4k+2,6k+2]$.
+The map equal to zero on the first block and one on the second
+is therefore a Freiman $2$-homomorphism into $\Z$.
+It is not affine: its values at $0$ and $1$ force both affine
+parameters to vanish, contradicting its value at $2k+1$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:robust-cluster}]
+The map $(b,x)\mapsto3Nb+x$ is a Freiman $2$-isomorphism from
+$B_r\times\{0,\ldots,N-1\}$ onto $A_{r,N}$:
+in any two-sum equality the vertical discrepancy has absolute value
+at most $2N-2<3N$, so both coordinates must agree separately.
+We therefore use the product coordinates.
+
+Write $S_b=\{x:(b,x)\in C\}$ and $k_b=N-|S_b|$, so
+$\sum_b k_b=K$. Choose a least-deleted fiber $S_c$, and put
+$h=k_c=\min_b k_b$. Its map is affine,
+$f(c,x)=t_c+x\beta$. Indeed, for $h=0$ this follows from consecutive
+increments on the full interval. For $h=1$ the dense-interval lemma
+applies because $N\ge6$. For $h\ge2$, the inequalities
+\[
+N\ge K+1\ge2rh+1\ge4h+1\ge3h+3
+\]
+again permit that lemma.
+
+Consider consecutive elements $x<y$ of any other fiber $S_b$, and
+put $d=y-x$. The $d-1$ omitted positions between them and the omissions
+from all other fibers give
+\[
+K\ge d-1+(2r-1)h.
+\]
+If $h>0$, it follows that $N-d\ge(2r-1)h>2h$. Among the $N-d$
+pairs at difference $d$ in the full interval, at most $2h$ are spoiled
+in $S_c$, so some $z,z+d\in S_c$ survive. If $h=0$, the full base
+fiber supplies such a pair for every $d<N$ directly. The rectangle
+relation
+\[
+(b,y)+(c,z)=(b,x)+(c,z+d)
+\]
+therefore gives $f(b,y)-f(b,x)=d\beta$. Telescoping along consecutive
+elements shows $f(b,x)=t_b+x\beta$ throughout every fiber.
+Single-point fibers satisfy this formula as well, and no fiber is empty
+because $K<N$.
+
+For every relation $b_1+b_2=b_3+b_4$ in $B_r$, the intersection of
+the corresponding distinct fibers omits at most $K<N$ positions.
+Evaluating at a common $x$ shows
+$t_{b_1}+t_{b_2}=t_{b_3}+t_{b_4}$. The interval
+$\{0,\ldots,r\}\subset B_r$ and the relations
+$(j-1)+1=j+0$ for $2\le j\le r$ give
+$t_j=t_0+j(t_1-t_0)$. The relations
+$((j-1)r)+r=jr+0$ for $2\le j\le r$ give the same formula for
+all remaining points of $B_r$. Set $\gamma=t_0$ and
+$\alpha=t_1-t_0$. This proves the asserted affine formula.
+
+Every integer $h$ with $1\le h\le r^2$ is $jr-i$ for some
+$1\le j\le r$ and $0\le i\le r-1$. Hence
+$B_r-B_r=\{-r^2,\ldots,r^2\}$.
+For $0<|h|\le r^2$, choose $b,c\in B_r$ with $b-c=h$.
+For every integer $t$ with $|t|<N-K$, there are $N-|t|>K$
+pairs $x,y\in\{0,\ldots,N-1\}$ satisfying $x-y=t$.
+At most $k_b+k_c\le K$ pairs have $x\notin S_b$ or $y\notin S_c$.
+Thus some pair survives. Injectivity of $f$ implies
+\[
+h\alpha+t\beta\ne0.
+\]
+For $h=0$ and $0<|t|<N-K$, choose a fiber with
+$k_b\le K/(2r)$. At most $2k_b\le K$ pairs in that fiber at
+difference $t$ are spoiled, so injectivity similarly gives
+$t\beta\ne0$.
+It follows that
+\[
+\{0,\ldots,r^2\}\times\{0,\ldots,N-K-1\}\longrightarrow G,
+\qquad (h,t)\longmapsto h\alpha+t\beta
+\]
+is injective: every nonzero difference of two inputs is one of the
+forbidden relations just established. This proves
+\eqref{eq:robust-cluster-order}.
+
+When $K=0$, the map
+$(b,x)\mapsto b+(r^2+1)x$ modulo $(r^2+1)N$ preserves source
+equalities and is injective, since $0\le b\le r^2$ and the indicated
+integer representatives lie in $[0,(r^2+1)N-1]$.
+
+For sharpness of rigidity, delete the $N$ points in row $b=0$.
+The map $g$ in Proposition~\ref{prop:cluster-unfolding} preserves all
+horizontal two-sum relations, so $f(b,x)=g(b)$ is a Freiman map into
+$\Z$. It is not affine in $(b,x)$: the vertical slope would be zero,
+and $g(1)=0$, $g(2)=1$ would force $g(b)=b-1$, whereas
+$g(2r)=r\ne2r-1$. This concerns rigidity, not a claim that the
+target-order lower bound must be sharp at every deletion size.
+\end{proof}
+
+\begin{corollary}\label{cor:no-near-lossless-model}
+For every fixed $M>0$, there is a sequence of integer sets $A$ with
+$|A|\to\infty$ such that no subset of size $|A|-o(|A|)$ admits an
+injective Freiman $2$-homomorphism into any finite abelian group of
+order at most $M|A|$.
+\end{corollary}
+\begin{proof}
+Choose a fixed $r\ge2$ with $(r^2+1)/(2r)>M$ and let $N\to\infty$.
+For $n=2rN$ and $K=o(n)=o(N)$, the hypotheses $N\ge6$ and $K<N$ hold
+eventually, and \eqref{eq:robust-cluster-order} gives
+$|G|\ge((r^2+1)/(2r)-o(1))n>Mn$.
+\end{proof}
+
+This obstruction has only three affine parameters and integral
+unit-coefficient recurrences. Even so, rebuilding the quotient after
+deleting a negligible fraction of the points does not produce a finite
+injective model of uniformly bounded linear size.
+It narrows the secondary compression objective substantially.
+It does \emph{not} contradict Erd\H{o}s's conjecture: no asymptotic
+Sidon upper bound below $\sqrt{|A_{r,N}|}$ is proved here.
+
+\begin{proposition}[Deleting the anchor row unfolds the product]
+\label{prop:cluster-unfolding}
+For the family in Theorem~\ref{thm:robust-cluster},
+\[
+s(A_{r,N})\ge(1-o(1))\sqrt{(2r-1)N}\qquad(N\to\infty,\ r\text{ fixed}).
+\]
+Its lower coefficient relative to $\sqrt{|A_{r,N}|}$ is therefore
+$\sqrt{1-1/(2r)}$. More precisely, deleting the row with horizontal
+coordinate zero leaves a set admitting a bijective Freiman
+$2$-homomorphism onto an interval of length $(2r-1)N$.
+\end{proposition}
+\begin{proof}
+On $B_r\setminus\{0\}$ define
+\[
+g(b)=b-1\quad(1\le b\le r),\qquad
+g(jr)=r+j-2\quad(2\le j\le r).
+\]
+This bijects the horizontal set onto $\{0,\ldots,2r-2\}$ and preserves
+all two-sum equalities. To verify the latter assertion, call
+$\{1,\ldots,r\}$ the small part and $\{2r,\ldots,r^2\}$ the large part.
+A small--small sum is at most $2r$, whereas any sum involving a large
+point is greater than $2r$; within the small part $g$ is affine.
+A mixed sum whose small point is less than $r$ is not divisible by $r$
+and uniquely determines its two summands, by reduction modulo $r$.
+Every remaining sum involves only multiples of $r$; on the entire
+progression $r,2r,\ldots,r^2$, the formula is $g(jr)=r+j-2$,
+so these equalities are preserved as well. This includes repeated
+summands and exhausts all possible equalities.
+
+It follows that $(b,x)\mapsto Ng(b)+x$ is a bijective Freiman
+$2$-homomorphism from
+$(B_r\setminus\{0\})\times\{0,\ldots,N-1\}$ onto
+$\{0,\ldots,(2r-1)N-1\}$. Pull back an interval Sidon set of size
+$(1-o(1))\sqrt{(2r-1)N}$, available from Singer's construction and
+prime asymptotics. The forward implication and injectivity suffice.
+\end{proof}
+
+The robust obstruction therefore distinguishes deletion of $o(N)$ points
+from deletion of the $N$ points in one anchor row. Its increasingly large
+finite-model obstruction as $r$ grows comes with actual Sidon subsets
+whose lower coefficient tends to $1$, rather than with evidence for a
+counterexample to the conjecture.
+
+The following upper bound is already a special case of
+Riblet's Theorem~3.1(ii)~\cite{RibletIntervals}; we include a
+self-contained proof for these products.
+\begin{proposition}[Known upper bound for the obstructing family]
+\label{prop:cluster-sidon-range}
+For each fixed $r\ge2$, as $N\to\infty$,
+\[
+s(A_{r,N})\le(1+o(1))\sqrt{2rN}.
+\]
+\end{proposition}
+\begin{proof}
+More generally let $B$ be any fixed set of
+$b$ integers and let $S\subset B\times\{0,\ldots,N-1\}$ be Sidon.
+Write $S_c=\{x:(c,x)\in S\}$, $k_c=|S_c|$, and $s=|S|$.
+Every positive vertical difference occurs at most once among all
+the fibers. In fact two occurrences give an equality of two source
+sums, and the Sidon condition makes the ordered difference pairs
+identical. Consequently
+$\sum_c\binom{k_c}{2}\le N-1$, so $s=O_b(\sqrt N)$ by
+$s^2/b\le\sum_c k_c^2\le2N-2+s$.
+
+Put $u=\floor{N^{3/4}}$ and let $R_c(y)$ count representations
+$y=x+t$ with $x\in S_c$ and $1\le t\le u$. Cauchy--Schwarz,
+applied within each fiber, gives
+\[
+\frac{u^2}{N+u}\sum_c k_c^2
+\le\sum_{c,y}R_c(y)^2
+\le su+2\sum_{d=1}^{u-1}(u-d)
+=su+u(u-1).
+\]
+The second inequality uses the uniqueness, across all fibers,
+of each positive difference $d$. Since $s/u=o(1)$ and $u=o(N)$,
+it follows that $\sum_c k_c^2\le(1+o(1))N$ and hence
+$s^2\le b\sum_c k_c^2\le(1+o(1))bN$.
+Take $B=B_r$ and $b=2r$.
+\end{proof}
+
+\section{An exact gain from doubling suitable fibers}
+This finite strengthening is proved, but no uniform asymptotic gain from it
+has been established.  Let $m=q^2+q+1$, and let $D\subset\mathbb Z/m\mathbb Z$
+be a Singer difference set.  Suppose $\phi:A_0\to\mathbb Z/m\mathbb Z$ is a
+Freiman $2$-homomorphism, where $A_0$ is a finite set of integers; injectivity
+is not assumed.  Write $O$ for its number of occupied fibers.  In each fiber
+of size at least two, choose one pair and assign that fiber the pair's
+positive difference.  Let $N_d$ count fibers assigned difference $d$.
+
+\begin{proposition}\label{prop:fiber-matching}
+Under these hypotheses, $A_0$ has a Sidon subset of size at least
+\[
+ \left\lceil\frac{(q+1)O}{m}
+ +\sum_{d:N_d>0}\frac{(q+1)^2N_d}{m(q+N_d)}\right\rceil.
+\]
+\end{proposition}
+\begin{proof}
+For a translate $D+u$, retain one point from each occupied selected fiber.
+For each assigned difference occurring in at least one selected fiber,
+choose one such fiber and replace its retained point by the assigned pair.
+Each fiber has only one assignment, so these choices never double a fiber
+twice.  The resulting set is Sidon.  Indeed, applying $\phi$ to a putative
+sum equality makes the unordered multisets of fibers equal.  If the equality
+lies in one fiber, a set of at most two integers is Sidon.  Otherwise it
+involves two different fibers, and a nontrivial equality forces their
+positive internal differences to agree, contrary to the construction.
+This argument includes repeated summands.
+
+Take $u$ uniformly in $\mathbb Z/m\mathbb Z$.  A specified fiber is selected
+with probability $(q+1)/m$.  Two distinct specified fibers are both selected
+with probability $1/m$: their nonzero difference has exactly one ordered
+representation in the Singer difference set.  Let $Y_d$ be the number of
+selected fibers assigned $d$.  Thus
+\[
+ \mathbb EY_d=\frac{(q+1)N_d}{m},\qquad
+ \mathbb EY_d^2=\frac{N_d(q+N_d)}m.
+\]
+For $N_d>0$, Cauchy--Schwarz gives
+\[
+ \mathbb P(Y_d>0)\ge
+ \frac{(\mathbb EY_d)^2}{\mathbb EY_d^2}
+ =\frac{(q+1)^2N_d}{m(q+N_d)}.
+\]
+The constructed Sidon set has one point per occupied selected fiber and
+one additional point for every $d$ with $Y_d>0$.  Averaging its integer size
+proves the result, including the ceiling.
+\end{proof}
+
+The additional summands have order $\min\{N_d/\sqrt m,1\}$.  One may average
+the proposition over the random affine maps in the main theorem, with any
+deterministic rule for assigning pairs.  What remains unproved is a useful
+uniform lower bound for this gain.  In particular, rare large fibers prevent
+pair counts alone from guaranteeing many multiply occupied fibers, and the following bound limits the average gain to $O(1)$ when there
+are only $O(n)$ distinct positive differences. For a half-window affine
+map, two points in one retained fiber with positive difference $d$
+satisfy $\operatorname{dist}(d\theta,\Z)<1/(2m)$. For each nonzero
+integer $d$ this event has probability $1/m$. The number of additional
+points in the construction is at most the number of such resonant
+differences. Thus its expected gain is at most $|\Delta^+(A)|/m$,
+where $\Delta^+(A)=\{b-a:a,b\in A,\ a<b\}$. In particular this is
+$O(1)$ for intervals at $m\sim\beta n$.
+
+\section{Obstructions to immediate further improvements}
+
+\subsection{Half-window rounding and target spacing}
+
+For every $\delta>1/2$ the same floor map can fail even on a three-term
+progression. Choose $0<\varepsilon<\min(2\delta-1,1)$, $m\ge5$, and
+\[
+A=\{0,1,2\},\qquad mt=\frac12-\frac\varepsilon2,
+\qquad m\theta=\frac32+\frac\varepsilon2.
+\]
+All three fractional remainders are below $\delta$, but the distinct
+floor labels are $0,2,3$. They violate the image of $0+2=1+1$ modulo
+$m$. Injectivity does not fix this error.
+
+More generally, if a measurable residual set $R\subset[0,1)$ is
+universally carry-free in the sense that reduction modulo one is
+injective on $R+R$, then $|R|\le1/2$. For a compact $K\subset R$,
+the sets $\min(K)+K$ and $\max(K)+K$ overlap in at most one point,
+so $|K+K|\ge2|K|$. Injectivity modulo one gives $|K+K|\le1$.
+Approximating $R$ from inside by compact subsets proves the assertion.
+For any such window of measure $\delta$, pair collisions still have
+probability $\delta^2/m$; changing its shape does not change these
+two moments.
+
+An attempted repair with a full window requires a stronger target.
+If a Sidon set $D\subset\Z/m\Z$ also has no adjacent elements in
+$D+D$, then
+\[
+|D|(|D|-1)+1=|D-D|\le\floor{m/2}.
+\]
+Indeed, adjacent differences $a-b,c-d$ would give adjacent sums
+$a+d,c+b$, and an adjacency-free subset of a cycle has at most
+$\floor{m/2}$ vertices. Thus the stronger target has asymptotic size
+at most $\sqrt{m/2}$. With a full rounding window, optimizing the same
+pair-deletion estimate and this target density again gives at most
+$2/(3\sqrt3)$. This only limits that specified combination of methods.
+
+\subsection{A sharp limit for arbitrary interval templates}
+
+The preceding limitation extends to unequal windows around arbitrary
+circle points. This concerns the specified pair-deletion guarantee;
+it does not upper-bound the actual occupied-cell count.
+
+\begin{proposition}[Interval-template limit]\label{prop:template-limit}
+Let $J_1,\ldots,J_s$ be disjoint positive-length arcs in $\T$, of
+lengths $\ell_1,\ldots,\ell_s$. Suppose they have the following
+universal label property: if $x_r\in J_{i_r}$ for $1\le r\le4$ and
+$x_1+x_2=x_3+x_4$ in $\T$, then the unordered multisets
+$\{i_1,i_2\}$ and $\{i_3,i_4\}$ agree.
+For every $n>1$, the affine pair-deletion guarantee
+\[
+G=n\sum_i\ell_i-\binom n2\sum_i\ell_i^2
+\]
+satisfies
+\[
+G\le\frac{2}{3\sqrt3}\frac{n}{\sqrt n-1}
+=\frac{2}{3\sqrt3}\sqrt n+O(1).
+\]
+Singer half-window templates asymptotically attain this coefficient.
+\end{proposition}
+\begin{proof}
+First suppose $s\ge2$, and put $W=\sum_i\ell_i$.
+The difference arcs $J_i-J_j$, indexed by ordered pairs $i\ne j$,
+are pairwise disjoint. A common difference for $(i,j)$ and $(k,l)$
+would give $x_i+x_l=x_k+x_j$; the label property and the two
+off-diagonal conditions force $(i,j)=(k,l)$.
+No difference arc has full measure, because it would intersect another
+positive-length difference arc. Thus each has length $\ell_i+\ell_j$,
+including the possibility of wraparound. Summing these lengths gives
+\[
+2(s-1)W\le1,\qquad s\le1+\frac1{2W}.
+\]
+By Cauchy--Schwarz,
+\[
+G\le nW-\frac{n(n-1)W^2}{2s}
+\le nW-\frac{n(n-1)W^3}{1+2W}=:F(W).
+\]
+If $G\le0$, the assertion is immediate. Otherwise $F(W)>0$, so
+$(n-1)W^2<1+2W$, or $W<1/(\sqrt n-1)$. Consequently
+\[
+\frac{n-1}{1+2W}\ge(\sqrt n-1)^2,
+\qquad
+G\le n\bigl(W-(\sqrt n-1)^2W^3\bigr).
+\]
+The maximum of $x-a^2x^3$ for $x\ge0$ is $2/(3\sqrt3 a)$;
+apply this with $a=\sqrt n-1$. For $s=1$, directly maximizing
+$n\ell-\binom n2\ell^2$ gives at most $n/(2(n-1))$, which is
+also below the asserted bound.
+
+For the final assertion, use arcs of length $1/(2m)$ based at the
+$q+1$ elements of a Singer set divided by $m=q^2+q+1$.
+Their label property follows from the same carry calculation as
+Theorem~\ref{thm:compression}. At $q^2\sim3n/4$ they give the
+coefficient of Theorem~\ref{thm:main}.
+\end{proof}
+
+The hypothesis allows different points carrying the same label in the
+four-term equality. It is stronger than merely requiring that every
+choice of one representative from each arc be Sidon; those statements
+must not be interchanged. The proposition rules out improving the
+coefficient solely by variable widths, non-grid centers, or mixtures
+of these templates while retaining the same first--second moment
+calculation. It leaves more accurate occupancy estimates open.
+
+\begin{proposition}[Equal-length transversal templates]\label{prop:transversal-template-limit}
+Let $J_1,\ldots,J_s\subset\T$ be disjoint arcs of a common positive
+length $\ell$, with $s\ge5$. Suppose every choice of one point from
+each arc is a Sidon set, with repeated summands allowed. For $n>1$,
+the pair-deletion guarantee satisfies
+\[
+ns\ell-\binom n2s\ell^2
+\le \frac{2}{3\sqrt3}\frac{n}{\sqrt n-1}
+       +\frac{n}{n-1}
+=\frac{2}{3\sqrt3}\sqrt n+O(1).
+\]
+Thus the coefficient in Proposition~\ref{prop:template-limit} remains
+optimal for equal-length templates under this weaker hypothesis.
+\end{proposition}
+\begin{proof}
+Discard arc endpoints, which changes neither lengths nor the displayed
+guarantee. Write $c_i$ for the arc centers. Disjointness gives circular
+separation at least $\ell$, and $s\ell\le1$, so $2\ell<1/2$.
+There is at most one unordered pair of centers whose circular distance
+is less than $2\ell$. Indeed, orient any such pair so that its positive
+short difference $d$ lies in $[\ell,2\ell)$. Its oriented difference
+arc is $(d-\ell,d+\ell)$ and contains $\ell$. Two disjoint close pairs
+would therefore give equal differences from four distinct labels,
+contradicting the transversal hypothesis. If two close pairs share a
+center, lift that center to $0$ and their other centers to
+$(-2\ell,2\ell)$. They cannot lie on the same side: their separation
+would then be less than $\ell$. On opposite sides they are $-a,b$ with
+$a,b\in[\ell,2\ell)$, and the point $(b-a)/2$ belongs to the central
+arc. Together with the two outer centers it is a three-term arithmetic
+progression, again a forbidden transversal. These real equalities also
+hold on the circle, so wraparound causes no exception.
+
+Delete the two arcs in the unique close pair, if one exists. All remaining
+centers have circular separation at least $2\ell$. We claim that these
+arcs satisfy the full label property of
+Proposition~\ref{prop:template-limit}. First their oriented difference
+arcs $J_i-J_j$, $i\ne j$, are pairwise disjoint. For pairs with the same
+first index or the same second index, their centers are separated by at
+least $2\ell$ and their open radii are $\ell$, proving disjointness.
+For pairs with four distinct indices an intersection directly gives
+a forbidden transversal collision. For pairs sharing an index in
+opposite positions, an intersection gives, for example,
+$x_i-x_j=x_k-x'_i$ modulo one. Average lifts of $x_i,x'_i$ in the same
+open arc to obtain $z_i\in J_i$ and $2z_i=x_j+x_k$, a forbidden
+three-term progression when $j\ne k$. For reversed pairs, average
+the two representatives in each of the two arcs; this gives
+$2z_i=2z_j$ with $z_i\ne z_j$, forbidden by the repeated-summand
+Sidon condition. This exhausts all shared-index cases.
+
+Every self-difference arc is $(-\ell,\ell)$, whereas center separation
+at least $2\ell$ makes every off-diagonal difference arc disjoint from
+it. Rearranging any four-term equality as equality of two differences
+now proves the full label property: two self-differences give the same
+unordered label multiset, a self-difference cannot equal an off-diagonal
+one, and two off-diagonal differences must have the same ordered labels.
+The use of lifts and open arcs also covers intervals crossing $0$.
+
+Apply Proposition~\ref{prop:template-limit} to the remaining arcs.
+Each of the at most two deleted arcs contributes at most
+\[
+\max_{x\ge0}\left(nx-\binom n2x^2\right)
+=\frac{n}{2(n-1)}
+\]
+to the guarantee. Adding these contributions proves the bound.
+Singer half-window templates supply asymptotic equality in the leading
+coefficient, as in Proposition~\ref{prop:template-limit}.
+\end{proof}
+
+For fewer than five equal-length arcs the same guarantee is at most
+$sn/(2(n-1))=O(1)$. This extension still bounds only the first--second
+moment certificate, not actual occupancy or an adaptive choice of the
+affine parameters. No assertion here extends the weaker transversal
+hypothesis to arbitrary unequal lengths.
+
+\subsection{Higher-point independence is false}
+
+For the actual integer set $A=\{0,3,7\}$ and the arc $I=[0,1/6)$,
+independent uniform $\theta,t$ satisfy
+\begin{equation}\label{eq:negative-triple}
+\Prob(t,t+3\theta,t+7\theta\in I)=\frac{13}{3024}
+<\left(\frac16\right)^3=\frac{14}{3024}.
+\end{equation}
+Here and below circle membership is understood modulo one.
+For a direct proof, put $l=1/6$, restrict $0\le t\le l$, and write
+$u=t+3\theta-k$, $v=t+7\theta-j$ with $0\le u,v\le l$.
+Then $7k-3j=4t-7u+3v\in[-7l,7l]$.
+With $0\le\theta\le1$, the only possible integer pairs are
+$(k,j)=(0,0),(3,7),(1,2),(2,5)$, apart from null boundaries.
+The first two regions each have area $l^2/14=1/504$.
+For $(1,2)$ the permitted $\theta$-interval has width $(8t-1)/42$
+for $1/8\le t\le1/6$, giving area $1/6048$.
+For $(2,5)$ its width is $1/126-4t/21$ on $0\le t\le1/24$,
+giving the same area. The total is $13/3024$.
+
+Inclusion--exclusion and two-point independence give union probability
+$1273/3024$, below the independent-binomial value $1274/3024$.
+This refutes exact independent-binomial domination. It does not refute
+an asymptotic Poisson lower bound at the linear-modulus scale, and it
+does not refute Erd\H{o}s's conjecture.
+
+\subsection{Triple independence does not control heavy fibers}
+
+The following example identifies a limitation of a proposed proof of
+an improved occupancy bound from positive triple moments alone.
+
+\begin{proposition}[Sharpness of pair deletion for general affine characters]
+\label{prop:finite-field-occupancy}
+Let $q$ be an odd prime, let $T\subseteq\F_q$ have size $1\le n\le q$,
+and set $P_T=\{(x,x^2):x\in T\}\subseteq\F_q^2$. Choose
+$u,v,t\in\F_q$ independently and uniformly, and let
+\[
+X=|\{x\in T:ux+vx^2+t=0\}|.
+\]
+Values of this affine map at any three distinct points are independent
+and uniform. Nevertheless
+\[
+\Prob(X>0)=\frac n q-\frac{n(n-1)}{2q^2}
++\frac{(n-1)(n-2)}{2q^3}.
+\]
+In particular, if $n/q\to\lambda\in(0,1]$, this tends to
+$\lambda-\lambda^2/2$, exactly the first--second-moment lower bound.
+The set $P_T$ itself is Sidon.
+\end{proposition}
+\begin{proof}
+For three distinct parameters $x_1,x_2,x_3$, the matrix with rows
+$(1,x_i,x_i^2)$ has nonzero Vandermonde determinant. Hence the three
+values are independent and uniform; the corresponding one- and
+two-point assertions follow as well. Thus
+$\E X=n/q$ and $\E\binom X2=\binom n2/q^2$.
+
+Unless $u=v=t=0$, a nonzero polynomial of degree at most two has at
+most two roots. The exceptional coefficient triple has probability
+$q^{-3}$ and gives $X=n$. The identity
+\[
+\mathbf1_{r>0}=r-\binom r2+
+\begin{cases}(r-1)(r-2)/2,&r\ge1,\\0,&r=0\end{cases}
+\]
+therefore gives the displayed exact formula. All the third factorial
+moment, $\E\binom X3=\binom n3/q^3$, comes from this single rare
+constant map, while its contribution to the occupancy surplus is
+only $(n-1)(n-2)/(2q^3)=O(1/q)$.
+
+Finally, if two pairs of parabola points have equal sums, their
+parameters have the same sum $s$ and the same sum of squares $r$.
+Since $q$ is odd, their product is $(s^2-r)/2$. Both unordered
+parameter pairs are therefore the multiset of roots of the same
+quadratic polynomial, including repeated roots. This proves the
+Sidon assertion.
+\end{proof}
+
+At $\lambda=2/3$ this example gives limiting occupancy $4/9$ despite
+exact three-point independence. It does not settle the corresponding
+question for integer sets under continuous torus projection. It shows
+that any argument using only character linearity and the first three
+moments must either use the extra connected-group geometry or identify
+a complementary class with a direct Sidon construction; this example
+belongs to the latter class.
+
+\subsection{An asymptotic Poisson obstruction at a fixed linear modulus}
+\label{sec:grid-obstruction}
+
+For a finite integer set $A$, write
+\[
+U_A(\epsilon)=\Prob_{\theta,t\in\T}
+\bigl(\text{some }a\in A\text{ has }a\theta+t\in[0,\epsilon)\bigr),
+\]
+with independent uniform parameters. If $O_A(m)$ counts the occupied
+half-cells $[j/m,(j+1/2)/m)$, translation invariance gives
+$\E O_A(m)=mU_A(1/(2m))$.
+
+\begin{theorem}[Failure of a universal Poisson occupancy estimate]
+\label{thm:grid-poisson}
+Put $d=32$, $\lambda=1/50$, and
+\[
+D=\frac1{12}\left(\frac23\right)^{32}\lambda^3>0.
+\]
+There are integer sets $A_L$ of size $n=L^{32}$ such that, with
+$m=25n$,
+\[
+\limsup_{L\to\infty}U_{A_L}(1/(2m))
+\le1-e^{-1/50}-\frac D2.
+\]
+The same conclusion holds along Singer moduli $m\sim25n$.
+Thus the proposed uniform estimate
+$U_A(1/(2m))\ge1-e^{-n/(2m)}-o(1)$ is false even when $m/n$
+converges to a fixed positive constant. Here $D\approx1.54521\cdot10^{-12}$.
+\end{theorem}
+
+This concerns expected occupancy in the specified random projection.
+It is not an upper bound on the largest Sidon subset, and says nothing
+about failure of a Poisson estimate near its optimized parameter.
+
+\begin{proof}
+We give the counting details, since dependencies among five points matter.
+
+\paragraph{Rational-plane counts.}
+Let $2\le s<k\le5$, and let $W\subset\R^k$ be a rational $s$-plane
+containing $\mathbf1=(1,\ldots,1)$. The lattice $K=W\cap\Z^k$ is
+primitive. For an integral basis matrix $B$ of $K$, let $H(W)$ be the
+maximum absolute value of an $s\times s$ minor. The gcd of these minors
+is one: extend a basis of the primitive lattice to an integer basis of
+$\Z^k$ and expand the resulting unimodular determinant. The signed
+minors are the primitive Pl\"ucker coordinates of $W$; they determine
+$W$ because $W=\{x:x\wedge p=0\}$ for its exterior vector $p$.
+Consequently, with $J=\binom ks$, there are at most $(2H+1)^J$ planes
+of height at most $H$, and hence also of height exactly $H$.
+
+Projection onto coordinates attaining a largest minor maps $K$
+injectively to a sublattice of $\Z^s$ of index $H$. A triangular
+Hermite basis with positive diagonal entries $h_i$ has $\prod_i h_i=H$.
+Counting coordinates successively, each in one congruence class, gives
+\begin{equation}\label{eq:grid-box-count}
+N_L(W):=|W\cap\{0,\ldots,L-1\}^k|
+\le\prod_{i=1}^s(L/h_i+1)
+\le L^s/H+(2^s-1)L^{s-1}.
+\end{equation}
+
+Consider ordered distinct $k$-tuples from $G_L=\{0,\ldots,L-1\}^d$
+whose augmented vectors $(1,a_i)$ have rank $s$. The all-ones row and
+the $d$ coordinate rows span a plane $W$ as above. It is not contained
+in $x_i=x_j$, and a fixed plane permits at most $N_L(W)^d$ tuples.
+Every realized plane has $H\le s!L^{s-1}$: wedge $\mathbf1$ with
+$s-1$ independent coordinate rows. Its integer minors are bounded by
+$s!L^{s-1}$ and form an integer multiple of the primitive Pl\"ucker
+vector.
+
+For any family of these planes with $H\ge h$, it follows that
+\begin{equation}\label{eq:grid-height-sum}
+\limsup_{L\to\infty}
+\frac{\#\{\text{tuples in the family}\}}{L^{sd}}
+\le\sum_W H(W)^{-d}
+\le(h+1)(3h)^J h^{-d},
+\end{equation}
+provided $d\ge J+2$ and $d>(s-1)J$. These inequalities hold for $d=32$.
+To justify the infinite sum, first restrict heights to $H\le R$ and
+take $L\to\infty$ in \eqref{eq:grid-box-count}. For $H>R$, use
+$(u+v)^d\le2^{d-1}(u^d+v^d)$. The normalized tail is at most
+\[
+2^{d-1}\sum_{H>R}O_k(H^J)H^{-d}
++O_{k,d}(L^{(s-1)J-d}).
+\]
+The second term vanishes as $L\to\infty$, and the first as $R\to\infty$.
+Finally, $(2H+1)^J\le3^JH^J$ and the integral bound for a decreasing
+power series give the final inequality in \eqref{eq:grid-height-sum}.
+This order of limits keeps the factor $2^{d-1}$ out of the finite-height
+main terms.
+
+\paragraph{Height restrictions and the needed refinements.}
+The following integral observation is useful. If $W$ has $k$ distinct
+coordinate functions, then
+\begin{equation}\label{eq:grid-packing-height}
+k\le(H(W)+1)^{s-1}.
+\end{equation}
+Indeed, complete the primitive vector $\mathbf1$ to an integral basis
+of $K$. The rows of its basis matrix are $(1,u_i)$, with distinct
+$u_i\in\Z^{s-1}$. If two $u_i$ agree modulo $H+1$, their distinct
+rows are linearly independent and extend with other rows to a nonzero
+$s\times s$ minor divisible by $H+1$, a contradiction. Thus the $u_i$
+have distinct residues modulo $H+1$.
+In particular, rank-three five-tuples have height at least two.
+For rank two, a basis $(\mathbf1,u)$ shows more explicitly that
+$H=\max u_i-\min u_i\ge k-1$.
+
+For collinear triples the primitive relation, up to sign, is a
+permutation of $(r,H-r,-H)$ with $1\le r<H$ and $(r,H)=1$.
+There are exactly $3\varphi(H)$ such planes. Their one-coordinate box
+density is $1/H$: the middle coordinate is a convex combination of
+the other two, with one divisibility condition of modulus $H$.
+For fixed $H$ and $\epsilon<1/H$, the simultaneous three-hit probability
+in $[0,\epsilon)$ is exactly $\epsilon^2/H$.
+Indeed, write the three integer vectors as $a_0,a_0+u v,a_0+Hv$,
+where $v\ne0$ is integral and $(u,H)=1$. Their phases are
+$t',t'+u z,t'+Hz$, with $t'=t+a_0\cdot\theta$ and
+$z=v\cdot\theta$ independent uniform circle points. Conditional on
+the two endpoint phases, $z$ has $H$ equiprobable branches. Their
+middle phases differ by the residues $u j/H$, which run through all
+$H$ multiples of $1/H$. If the endpoints lie in $[0,\epsilon)$,
+exactly one middle phase lies there, namely their real convex
+combination. Fixed-height truncation and the tail argument above
+justify summing this exact formula. Hence the collinear contribution
+to the third factorial moment is bounded by $A_d\lambda^2$, where
+\begin{equation}\label{eq:grid-Ad}
+A_d=\frac14\,2^{-d}
++\frac12\left(1+\frac3{d-1}\right)3^{-d}.
+\end{equation}
+Here $(\lambda^2/2)\sum_{H\ge2}\varphi(H)H^{-d-1}$ is the preceding
+bound; keep $H=2$ exactly and use $\varphi(H)\le H$ for the tail.
+
+For rank-four five-tuples, a height-one relation has coefficients in
+$\{-1,0,1\}$ summing to zero. Support two would equate two points.
+The only remaining case has two coefficients $+1$, two $-1$, and one
+zero. There are 15 such planes. Their one-coordinate count is
+$L(2L^3+L)/3$, so each has density $2/3$. The other rank-four planes,
+of height at least two, have normalized count at most
+$23328\,2^{-d}$ by \eqref{eq:grid-height-sum}.
+
+There are at most 2100 height-two rank-three planes with five distinct
+coordinate functions. Their primitive maximal minors have gcd one
+and absolute value at most two, so some minor is $\pm1$. Normalize
+the corresponding three indexed affine points to $(0,0),(1,0),(0,1)$.
+Each remaining integer point $(x,y)$ satisfies
+$|x|,|y|,|1-x-y|\le2$. Excluding the three frame points leaves 15
+candidates: there are respectively $2,3,2,4,4$ at
+$x=-2,-1,0,1,2$. There are at most $\binom53\cdot15\cdot14=2100$
+choices; ignoring other triangle minors only enlarges this count.
+For heights at least three, summing $(2H+1)^{10}H^{-d}$ gives the bound
+$3^{20}(1+3/(d-11))3^{-d}$. Therefore the normalized rank-three
+five-tuple count is at most
+\begin{equation}\label{eq:grid-Bd}
+B_d=2100\,2^{-d}
++3^{20}\left(1+\frac3{d-11}\right)3^{-d}.
+\end{equation}
+
+For rank-two five-tuples, normalize the primitive integer positions
+to minimum zero and maximum $H\ge4$. After identifying reflection,
+there are at most ten choices of the positions of the extrema and
+at most $H^3$ ordered choices for the other positions. Thus at most
+$10H^3$ planes have height $H$, giving normalized count at most
+\begin{equation}\label{eq:grid-Cd}
+C_d=640\left(1+\frac4{d-4}\right)4^{-d}.
+\end{equation}
+All these refinements use the same tail justification as
+\eqref{eq:grid-height-sum}.
+
+\paragraph{The moment comparison.}
+Fix $d=32$, take $n=L^d$ and $\epsilon=\lambda/n$, and let
+\[
+X_L=\sum_{a\in G_L}\mathbf1_{[0,\epsilon)}(t+a\cdot\theta),
+\]
+where $t,\theta_1,\ldots,\theta_d$ are independent uniform circle
+points. A tuple of augmented rank $s$ has $s$ independent uniform
+phase coordinates: its full-row-rank integral matrix defines a
+surjective torus homomorphism. Consequently its simultaneous hit
+probability is at most $\epsilon^s$, and is exactly $\epsilon^k$
+for a full-rank $k$-tuple. With $M_j=\E\binom{X_L}{j}$, we obtain
+\[
+M_1=\lambda,\qquad M_2\longrightarrow\lambda^2/2,\qquad
+\limsup M_3\le\lambda^3/6+A_d\lambda^2.
+\]
+
+Almost all ordered quadruples have full augmented rank four: the
+lower-rank counts are $O_d(n^3)$. Their fourth-moment contribution
+tends to $\lambda^4/24$. The grid's ordered additive energy is
+$[(2L^3+L)/3]^d$. Repeated-index solutions contribute $O(n^2)$,
+and collinear quadruples contribute $O_d(n^2)$ by the rank-two count.
+Thus the number of unordered noncollinear parallelograms is
+$(1/8)(2/3)^d n^3+o(n^3)$. Each has simultaneous hit probability
+$2\epsilon^3/3$: three independent phases determine the fourth, and
+the integral is the square-integral of the triangular convolution of
+$\mathbf1_{[0,\epsilon)}$ with itself. It follows that
+\[
+\liminf M_4\ge\lambda^4/24+
+\frac1{12}(2/3)^d\lambda^3.
+\]
+Separating the fifth moment by augmented ranks five, four, three,
+and two gives
+\[
+\limsup M_5\le\frac{\lambda^5}{120}
++\frac18(2/3)^d\lambda^4
++\frac{23328}{120}\,2^{-d}\lambda^4
++\frac{B_d\lambda^3+C_d\lambda^2}{120}.
+\]
+The divisors $6,24,120$ throughout convert ordered distinct tuples
+to subsets.
+
+The fifth Bonferroni inequality gives
+$\Prob(X_L>0)\le M_1-M_2+M_3-M_4+M_5$.
+For $0<\lambda\le1$, the degree-five alternating exponential
+polynomial exceeds $1-e^{-\lambda}$ by at most $\lambda^6/720$.
+Consequently
+\[
+\limsup\Prob(X_L>0)\le1-e^{-\lambda}-D_d+E_d,
+\]
+where
+\[
+D_d=\frac1{12}(2/3)^d\lambda^3
+\]
+and
+\[
+E_d=\frac{\lambda^6}{720}+A_d\lambda^2
++\frac18(2/3)^d\lambda^4
++\frac{23328}{120}\,2^{-d}\lambda^4
++\frac{B_d\lambda^3+C_d\lambda^2}{120}.
+\]
+At $d=32$, $\lambda=1/50$, substitution into these explicit fractions gives
+\[
+\frac{E_d}{D_d}
+=\frac{290086345369360189976620730533563}
+{1311684514281872654556200960000000}
+<\frac12.
+\]
+The script \texttt{research/sidon/scripts/poisson\_grid\_constants.py}
+reproduces the rational inequality without floating-point comparisons.
+This proves the claimed deficit in the grid model.
+
+\paragraph{Integer realization and Singer moduli.}
+For each $L$, choose a sufficiently large integer base $M>2(L-1)$
+and form
+\[
+A_{L,M}=\left\{\sum_{j=0}^{d-1}a_jM^j:0\le a_j<L\right\}.
+\]
+It has $L^d$ distinct integer elements. For fixed $L,d$, the
+distribution of $(t,\theta,M\theta,\ldots,M^{d-1}\theta)$ converges
+to Haar measure on $\T^{d+1}$ as $M\to\infty$: a fixed nontrivial
+Fourier character has zero expectation for all sufficiently large
+$M$, since a nonzero integer polynomial has finitely many roots.
+Approximation by trigonometric polynomials gives weak convergence.
+The boundary of the union-hit event is contained in finitely many
+affine subtori and has measure zero. Choose $M=M(L)$ so the resulting
+probability differs from that of the grid by at most $1/L$.
+This proves the integer claim at $m=25n$, for which
+$1/(2m)=\lambda/n$ exactly.
+
+Alternatively choose primes $q\sim5\sqrt n$ and
+$m=q^2+q+1\sim25n$. Then $n/(2m)\to\lambda$. Changing interval
+length from $\lambda/n$ to $1/(2m)$ changes any union probability
+by at most $n|1/(2m)-\lambda/n|=o(1)$, by the union bound.
+The same positive deficit survives, including the integer realization.
+\end{proof}
+
+These integer digit grids also satisfy Corollary~\ref{cor:box-model},
+since $K=L-1=o(\sqrt{L^{32}})$. They therefore have the stronger
+$0.544331\ldots$ Sidon lower bound proved for that class. This makes
+the distinction between an occupancy obstruction and a Sidon
+obstruction particularly explicit.
+
+\subsection{A small quotient can conceal an easy deletion}
+
+Let $A_k=\{0,1,2,4,\ldots,2^k\}$, so $n=k+2$. Its only nontrivial
+unordered collision equalities are
+\[
+0+2^{j+1}=2^j+2^j\qquad(0\le j<k).
+\]
+This follows from binary expansion: two distinct positive powers give
+two nonzero digits, while a doubled power and a sum with zero give
+one. Each displayed relation eliminates the next power with a unit
+coefficient, leaving the universal Freiman quotient free on the
+generators at $0$ and $1$. It therefore has rank two. Nonetheless,
+removing $0$ leaves a Sidon set of size $n-1$.
+Its ordered additive energy is only
+\[
+E(A_k)=2n^2-n+4(n-2)=2n^2+3n-8:
+\]
+each displayed collision merges ordered multiplicities $1$ and $2$,
+increasing energy by $3^2-1^2-2^2=4$.
+Thus neither low collision energy nor a small universal quotient
+automatically supplies higher character independence or identifies
+the difficult branch of Sidon extraction.
+
+\subsection{A precise high-energy reduction}
+\label{sec:energy-reduction}
+
+The following is a standard probabilistic alteration argument, included
+to isolate a concrete remaining branch. It is not claimed as a novel
+universal improvement.
+
+Let $r_A(s)=|\{(a,b)\in A^2:a+b=s\}|$ and let
+$E(A)=\sum_s r_A(s)^2$. Let $T_3(A)$ count unordered three-element
+arithmetic progressions in $A$, and let $Q_4(A)$ count unordered pairs
+of distinct off-diagonal two-element subsets of $A$ having the same
+sum. Such a pair necessarily uses four distinct elements.
+
+\begin{proposition}[Energy-dependent alteration]
+\label{prop:energy-alteration}
+For every finite integer set $A$ of size $n$,
+\[
+s(A)\ge\ceil{\max_{0\le p\le1}
+\bigl(np-T_3(A)p^3-Q_4(A)p^4\bigr)}.
+\]
+Moreover,
+\[
+E(A)=2n^2-n+4T_3(A)+8Q_4(A),\qquad
+T_3(A)\le\frac{\sqrt{nE(A)}-n}{2}.
+\]
+For every fixed $\gamma>0$, uniformly over sets satisfying
+$E(A)\le\gamma n^{5/2}$,
+\[
+s(A)\ge
+\frac34\left(\frac2\gamma\right)^{1/3}\sqrt n
+-\gamma^{-1/2}n^{1/4}
+\]
+for all sufficiently large $n$.
+\end{proposition}
+\begin{proof}
+Select every element independently with probability $p$. Every
+nontrivial Sidon relation uses either three distinct elements, forming
+an arithmetic progression, or four distinct elements counted by
+$Q_4$. Delete one point from each surviving bad relation, in any
+order. Deletion creates no relation. The remaining set is Sidon and
+has size at least the selected cardinality minus the original number
+of surviving bad relations. Taking expectations gives the finite
+bound, including its ceiling and optimization over $p$.
+
+For the energy identity, a sum with $k$ unordered off-diagonal
+representations and $e\in\{0,1\}$ diagonal representations has
+ordered representation count $2k+e$. Its contribution beyond the
+trivial ordered equalities is
+\[
+(2k+e)^2-(4k+e)=8\binom k2+4ke.
+\]
+The first term counts proper four-point collisions and the second
+counts arithmetic progressions. Summing proves the identity.
+Also
+\[
+T_3(A)=\frac12\left(\sum_{b\in A}r_A(2b)-n\right)
+\le\frac{\sqrt{nE(A)}-n}{2},
+\]
+by Cauchy--Schwarz. In particular, diagonal relations cannot simply be
+discarded using only the weaker bound $T_3\le n^2$.
+
+Suppose now that $E(A)\le\gamma n^{5/2}$. Put
+$c=(2/\gamma)^{1/3}$ and $p=c/\sqrt n\le1$. The fourth-order loss is
+at most $(\gamma c^4/8)\sqrt n$, since $Q_4\le E(A)/8$.
+The third-order loss is at most
+\[
+\frac{c^3}{n^{3/2}}\frac{\sqrt\gamma}{2}n^{7/4}
+=\gamma^{-1/2}n^{1/4}.
+\]
+Finally $c-\gamma c^4/8=3c/4$, proving the stated bound.
+\end{proof}
+
+Consequently the constant $0.4$ is already supplied by this argument
+on the branch
+\[
+E(A)\le\frac{3375}{256}\,n^{5/2},
+\]
+up to its vanishing asymptotic loss. The constant $0.5$ is supplied on
+the branch $E(A)\le(27/4)n^{5/2}$. A universal improvement to either
+constant would still require a proof for the complementary high-energy
+branch. No such complementary proof is established here.
+
+\section{Finite verification and reproducibility}
+
+The independent Python script
+\texttt{research/sidon/computation/verify\_affine\_sidon.py}
+uses exact integer and rational arithmetic and no third-party packages.
+It constructs Singer sets for primes $q=2,3,5,7,11,13,17,19$ by explicit
+cubic finite fields, verifies every nonzero cyclic difference occurs
+once, and checks all unordered sums including repeated summands.
+It exhausts a prime-grid version of the two-point calculation, and
+tests exact rational affine maps on intervals, negative intervals,
+separated clusters, geometric progressions, Boolean cubes, and dense
+and sparse random sets. Every original two-sum equality in every
+retained test domain is checked before every Singer pullback is checked.
+
+The recorded run uses seed $20261003$ and $2000$ affine trials for each
+of seven ambient examples. Its output is
+\texttt{research/sidon/computation/verification.json}, including source
+sets, explicit Sidon subsets, affine parameters, target translates,
+and a SHA-256 hash of the script. Reproduce it from the project root by
+\begin{verbatim}
+python3 research/sidon/computation/verify_affine_sidon.py --trials 2000
+\end{verbatim}
+The widened-window counterexample is verified exactly with
+$m=5$, $\theta=13/40$, $t=3/40$, $\delta=3/4$.
+The small negative-correlation example also has a separate rational
+certificate, but its area proof above is independent of computation.
+
+Further exact certificates are provided by the standard-library scripts
+\path{research/sidon/scripts/ap_surplus_certificate.py},
+\path{research/sidon/scripts/poisson_grid_constants.py},
+\path{research/sidon/scripts/rigidifier_certificate.py}, and
+\path{research/sidon/scripts/short_window_certificate.py}.
+They check, respectively, the progression surplus and representative
+probabilities; the printed rational grid deficit; and the integral
+relations and collapse properties of the two rigidifier constructions.
+Their saved JSON files are in \path{research/sidon/computation/}
+and \path{research/sidon/results/}.
+The progression certificate exhausts all $512$ subsets of a nine-point
+interval and $15\,870$ exact finite sampling parameters.
+These certificates support fully written proofs rather than replace them.
+
+An optional Z3 search, \path{research/sidon/scripts/cluster_sidon_search.py},
+records explicit finite Sidon witnesses in
+\path{research/sidon/results/cluster_sidon_search.json}. Each witness is
+independently checked by enumerating all unordered two-sums. Solver
+UNSAT results are diagnostic unless accompanied by a separately checked
+proof certificate; no asymptotic conclusion depends on them.
+
+Exploratory searches for substantially stronger cyclic models did not
+yield a universal theorem or a general counterexample. In particular, solver timeouts were
+\emph{UNKNOWN}, not UNSAT, and random-subset search failures were not
+interpreted as negative mathematical evidence.
+
+\section{Remaining claims and session record}
+
+The conjectural constant $1$ remains open in this report. The next
+mathematical steps are limited to the following three explicit claims;
+none is proved here.
+\begin{enumerate}
+\item At $m\sim3n/4$, prove a universal occupied-arc surplus
+\[
+U_A(1/(2m))\ge\frac49+\eta-o(1)
+\]
+for some fixed $\eta>0$. Since expected occupied cells equal $mU_A$,
+this would increase the Sidon coefficient by $(\sqrt3/2)\eta$.
+The Poisson obstruction at $m\sim25n$ does not disprove this weaker
+claim at the indicated parameter.
+\item Prove a structural dichotomy that either supplies a subset of
+size $(\alpha+o(1))n$, for some fixed $\alpha>1/2$, with distinct
+classes in its rebuilt modular Freiman quotient at primes
+$p\sim\sqrt{3\alpha n/2}$, or gives a direct Sidon bound exceeding
+$2/(3\sqrt3)$ in the complementary case. The modular branch would
+supply coefficient $(2\sqrt2/(3\sqrt3))\sqrt\alpha$.
+The rigidifier and robust-product theorems explain why near-lossless
+finite modeling cannot simply be assumed.
+\item Prove $s(A)\ge(0.4-o(1))\sqrt n$ in the remaining regime
+\[
+E(A)>\frac{3375}{256}n^{5/2},\qquad
+T(A)<\frac{2}{27}n^2.
+\]
+The energy alteration and progression-sensitive compression already
+supply the same asymptotic coefficient on the other two branches.
+A proof of this precise residual case would therefore yield a
+universal $0.4$ bound. No conclusion for this case follows from global
+energy or a small quotient alone.
+\end{enumerate}
+
+The research session ran from 22:30:34 UTC on 3 October 2026 to
+00:30:51 UTC on 4 October 2026: 2 hours, 0 minutes, 17 seconds.
+Independent internal adversarial audits found no gap in the final
+claims; these are not external peer review or publication-priority
+certification. The source, exact certificates, and detailed audit
+records accompany this report.
+
+\clearpage
+\begin{thebibliography}{9}
+\bibitem{BR}
+A. Bailleul and R. Riblet,
+\emph{On the largest Sidon subset in a finite subset of $\R^N$},
+arXiv:2605.03181v1 (4 May 2026), especially Lemmas 2.3--2.5 and
+Theorem 2.2. \url{https://arxiv.org/html/2605.03181v1}.
+
+\bibitem{RuzsaII}
+I. Z. Ruzsa, \emph{Solving a linear equation in a set of integers II},
+Acta Arith. \textbf{72} (1995), 385--397, Theorem 4.4.
+\url{https://matwbn.icm.edu.pl/ksiazki/aa/aa72/aa7248.pdf}.
+
+\bibitem{Ruzsa2006}
+I. Z. Ruzsa, \emph{Additive and multiplicative Sidon sets},
+Acta Math. Hungar. \textbf{112} (2006), 345--354.
+\url{https://doi.org/10.1007/s10474-006-0102-0}.
+Full text not obtained; no theorem in this report relies on it.
+
+\bibitem{Singer}
+J. Singer, \emph{A theorem in finite projective geometry and some
+applications to number theory}, Trans. Amer. Math. Soc.
+\textbf{43} (1938), 377--385.
+\url{https://doi.org/10.1090/S0002-9947-1938-1501951-4}.
+
+\bibitem{PZ}
+J. Pach and D. Zakharov, \emph{Ruzsa's problem on bi-Sidon sets},
+Combinatorica \textbf{45} (2025), article 26, Propositions 1--2.
+\url{https://arxiv.org/html/2409.03128v2}.
+
+\bibitem{Huber}
+F. Huber, \emph{Large Sidon subsets of distinct multinomial
+coefficients}, arXiv:2608.02667v1 (2 August 2026).
+\url{https://arxiv.org/html/2608.02667v1}.
+
+\bibitem{RibletIntervals}
+R. Riblet, \emph{Sidon sets in a union of intervals},
+arXiv:2202.01296, Theorem 3.1(ii).
+\url{https://arxiv.org/pdf/2202.01296}.
+
+\bibitem{Green}
+B. Green, \emph{Additive combinatorics, exercises 2}, Question 7.
+\url{https://people.maths.ox.ac.uk/greenbj/papers/addcomb-sheet2.pdf}.
+The relevant assertion is recorded as unverified in this report.
+\end{thebibliography}
+\end{document}

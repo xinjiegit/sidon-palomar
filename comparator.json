@@ -1,0 +1,13 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "PalomarSidon.universal_integer_bound",
+    "PalomarSidon.finite_prime_power_bound",
+    "PalomarSidon.affine_compression",
+    "PalomarSidon.universal_real_bound",
+    "PalomarSidon.universal_torsion_free_bound"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

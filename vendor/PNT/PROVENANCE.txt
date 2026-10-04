@@ -1,0 +1,11 @@
+Source: https://github.com/AlexKontorovich/PrimeNumberTheoremAnd
+Commit: c39a751132c88b6e8080b74c74023fd95b3d8be0
+Original license: Apache-2.0 (preserved in APACHE-2.0.txt).
+
+Nine modules forming the source import closure of Consequences were selected.
+Wiener is truncated immediately before section auto_cheby (after WeakPNT).
+The unrelated prelim_decay_2, AbsolutelyContinuous, prelim_decay_3 and decay_alt
+block is omitted; it contained two unproved claims unused by WeakPNT.
+Consequences is truncated after chebyshev_asymptotic.
+Every file is migrated to the Lean module system with public imports and an
+exposed public section. Compatibility changes are documented in migration notes.

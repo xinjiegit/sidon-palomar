@@ -1,0 +1,29 @@
+name = "SidonLowerBound"
+version = "0.1.0"
+defaultTargets = ["SidonProof", "Challenge", "Solution"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "065356127b1dc0016f66b7283ce0ce2c4055aa55"
+
+[[require]]
+name = "LeanArchitect"
+git = "https://github.com/hanwenzhu/LeanArchitect.git"
+rev = "d687bf2e69d8a48cf7c03b1db79cb4f8adb91edc"
+
+[[lean_lib]]
+name = "SidonProof"
+roots = ["Affine", "Asymptotic", "Basic", "CellGeometry", "Compression", "Extraction", "Finite", "GeneralCellGeometry", "GeneralCompression", "GeneralOccupancy", "Main", "Occupancy", "RelationExtraction", "Singer", "SingerLibrary", "SingerPrimePower", "SingerPrimePowerLibrary", "Transfer", "Translation"]
+
+[[lean_lib]]
+name = "PrimeNumberTheoremAnd"
+globs = ["PrimeNumberTheoremAnd.**"]
+
+[[lean_lib]]
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]

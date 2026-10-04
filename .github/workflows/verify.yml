@@ -1,0 +1,53 @@
+name: Lean and Comparator
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Structural preflight
+        run: python3 scripts/preflight.py
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: false
+      - name: Build from the committed lock file
+        run: scripts/build.sh
+      - name: Install Comparator sandbox dependency
+        # Matches PalomarTemplate: this runner is ephemeral. Ubuntu 24.04's
+        # AppArmor user-namespace restriction otherwise prevents bubblewrap.
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Compare statements and replay independent kernels
+        run: scripts/verify-comparator.sh
+  license:
+    name: Detect repository licence
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b
+        with:
+          ruby-version: "3.3.12"
+      - name: Use Palomar's pinned detector
+        run: |
+          gem install licensee --version 10.0.0 --no-document
+          licensee detect LICENSE --json --no-packages --no-readme > "$RUNNER_TEMP/license.json"
+          ruby -rjson -e '
+            report = JSON.parse(File.read(ARGV.fetch(0)))
+            identifiers = report.fetch("licenses").map { |item| item.fetch("spdx_id") }
+            abort "LICENSE must be detected exactly as GPL-3.0" unless identifiers == ["GPL-3.0"]
+          ' "$RUNNER_TEMP/license.json"

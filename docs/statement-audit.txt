@@ -1,0 +1,97 @@
+Independent semantic audit of the Palomar statement surface
+=========================================================
+
+Scope: Challenge.lean and Solution.lean were compared with Main.lean,
+Finite.lean, GeneralCompression.lean, and Basic.lean in the original Lean 4.31
+development, and with their migrated copies in this project. This is an
+AI-assisted statement audit, not human peer review or a novelty certification.
+Build and Comparator evidence are recorded separately.
+
+1. Strict Sidon convention
+
+PalomarSidon.IsSidon quantifies over all four elements of the finite set without
+any distinctness hypotheses. Equality a+b=c+d must imply either a=c and b=d,
+or a=d and b=c. Thus repeated summands, three-term arithmetic progressions,
+and all diagonal additive relations are included. The predicate is precisely
+the original SidonResearch.IsSidon after unfolding; it is not weak Sidon.
+
+2. Universal integer bound
+
+universal_integer_bound states that for every real epsilon > 0, one natural
+threshold N works for every finite integer set A with card(A) >= N. The
+existential subset B is contained in A, is strict Sidon, and satisfies
+card(B) >= (2/(3 sqrt(3)) - epsilon) sqrt(card(A)). There is no diameter,
+density, doubling, additive-energy, or ambient-interval hypothesis. The
+cardinality is cast into the reals before applying sqrt. This is exactly the
+usual uniform epsilon formulation of the claimed lower bound on H(n).
+Source proof: SidonResearch.universal_sidon_lower_bound.
+
+3. Finite prime-power inequality
+
+finite_prime_power_bound quantifies over every finite integer A and every
+natural q satisfying Mathlib's IsPrimePow q. With n=card(A) and
+m=q^2+q+1, its conclusion is
+
+  card(B) >= ceil( (q+1)/m * ceil(n/2 - n(n-1)/(8m)) ).
+
+Both ceilings have integer codomain, and the inner integer ceiling is cast
+to the reals before multiplication. All subtractions in the unrounded
+expression are real subtraction; there is no truncated natural subtraction.
+The final comparison is an integer inequality with card(B) cast to integers.
+The statement includes n=0 and other small cardinalities and needs no
+asymptotic qualification. It is exactly the original double-ceiling theorem.
+Source proof: SidonResearch.finite_sidon_bound_ceil.
+
+4. Variable-density compression
+
+affine_compression requires only finite A subset Z, a natural modulus m>0,
+and a real delta in [0,1/2]. It returns C subset A and f:Z -> ZMod m,
+injective on C, with
+
+  card(C) >= ceil(delta*n - delta^2*n*(n-1)/(2*m)).
+
+Freiman2On preserves every existing two-sum equality among elements of C;
+it does not require the converse. Set.InjOn f C is a separate, explicit
+hypothesis in the conclusion, so distinct retained points cannot collapse.
+Both endpoints delta=0 and delta=1/2 are included. The only interface change
+from the original theorem is replacing the implicit NeZero m typeclass with
+the explicit mathematical hypothesis m>0, from which Solution constructs it.
+Source proof: SidonResearch.affine_compression_delta_ceil.
+
+5. Transfer claims
+
+universal_real_bound places the threshold N before the dimension d and before
+the finite set A in R^d. Thus the threshold is uniform in d, including d=0.
+The strict predicate and numerical constant are identical to the integer
+claim. Source proof: SidonResearch.universal_sidon_lower_bound_real.
+
+universal_torsion_free_bound assumes only an additive commutative group and
+Mathlib's IsAddTorsionFree predicate. For each such ambient group it gives the
+same numerical lower bound, uniformly over its finite subsets. The Challenge
+does not claim a single threshold quantified before all possible groups.
+Source proof: SidonResearch.universal_sidon_lower_bound_torsionFree.
+
+6. Independence and Comparator configuration
+
+Challenge imports Mathlib alone; it does not import the local proof, the
+prime number theorem dependency, Singer's development, or Solution. Solution
+does not import Challenge. Their two definition bodies and five theorem
+statements agree verbatim up to whitespace. Solution discharges the change
+of predicate namespace by unfolding the two identical predicates.
+
+The five theorem names in comparator.json cover all advertised claims.
+definition_names is empty because it denotes missing definition values, not
+fixed definitions. IsSidon and Freiman2On are fully specified in Challenge;
+Comparator compares their bodies as dependencies of the theorem statements.
+The permitted axioms are exactly propext, Quot.sound, and Classical.choice.
+The five deliberate sorry holes occur only in Challenge. This configuration
+does not permit sorryAx, native_decide's Lean.ofReduceBool, or custom axioms.
+
+7. Limits of this audit
+
+The statement surface does not assert resolution of Erdos's conjectured
+constant 1, novelty of the improved constant, human review, the weighted
+refinement, or the report's additional obstructions. It records mathematical
+claims only. Compiler success, complete dependency axiom checks, and exact
+Comparator/kernel success must be supported by their own actual run logs;
+this semantic audit does not stand in for them.

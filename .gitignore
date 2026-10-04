@@ -1,0 +1,7 @@
+.lake/
+*.olean
+*.olean.private
+*.olean.server
+*.ilean
+*.trace
+.DS_Store

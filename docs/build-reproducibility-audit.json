@@ -1,0 +1,58 @@
+{
+  "timestamp_utc": "2026-10-04T07:03:35.729552+00:00",
+  "pnt_upstream_commit": "c39a751132c88b6e8080b74c74023fd95b3d8be0",
+  "pnt_transform_checks": [
+    {
+      "path": "PrimeNumberTheoremAnd/Consequences.lean",
+      "exact_documented_transform": true,
+      "sha256": "d47a9d0f51570f251aa13dc5776f9de97b128a604b03328a3f4eb7f26e057423"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Defs.lean",
+      "exact_documented_transform": true,
+      "sha256": "1ff77b1e805baefb6aefcf277c3ccfcb913b24845c83cdca36de91c0c54965ae"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Fourier.lean",
+      "exact_documented_transform": true,
+      "sha256": "210adb08c69030efe1f0a60767e2101a96398f29cf41d2819b4a3f5a8b6db9b9"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Mathlib/Algebra/Notation/Support.lean",
+      "exact_documented_transform": true,
+      "sha256": "422240e7d648fc320dea3c79e7b1730c16b001f05dac914d79b12fe93209f7c1"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Mathlib/Analysis/Asymptotics/Asymptotics.lean",
+      "exact_documented_transform": true,
+      "sha256": "5de183c25543bf861f9557e9d372c2b2a8f1a1b0a2dd3b029b9b8ed742c53115"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Mathlib/Analysis/SpecialFunctions/Log/Basic.lean",
+      "exact_documented_transform": true,
+      "sha256": "10fa0d5ffa5a495432576ddea6d134779104576a17bffda694736d1b533a7202"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/SmoothExistence.lean",
+      "exact_documented_transform": true,
+      "sha256": "2bd8618bc1094ae3406899fe9f19f4aa7a68a2be38eb22654368561d2b01b78a"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Sobolev.lean",
+      "exact_documented_transform": true,
+      "sha256": "208a283f5063e9a49a10d4bb19d01dd30207218b15ec76d1692f3e571c484c29"
+    },
+    {
+      "path": "PrimeNumberTheoremAnd/Wiener.lean",
+      "exact_documented_transform": true,
+      "sha256": "288c6e5f18e4dfcf5f7bc568580a15de0c9a4f03f62c41e3145dcf32d2cd80ae"
+    }
+  ],
+  "notes": [
+    "No PNT proof term was edited beyond adding module visibility and removing unused declarations/source suffixes.",
+    "All ten materialized Git dependency HEADs match their committed lock revisions; tracked source clean.",
+    "Eight transitive mathlib dependencies match exact canonical mathlib manifest URLs and commits.",
+    "Linux CI configured, not executed here.",
+    "Release preflight intentionally remains blocked by human identity placeholders."
+  ]
+}

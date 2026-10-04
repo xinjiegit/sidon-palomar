@@ -1,0 +1,228 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/99c678e569c7c4c0772db297c5ddd5e4c9b6322e/schema/formalization.schema.json
+# PREPARATION DRAFT: replace both human-identity placeholders before submission.
+# This metadata does not assert that Palomar has verified or registered anything.
+version: "v0.4"
+
+project:
+  name: "Affine compression and a universal lower bound for Sidon subsets"
+  description: >-
+    Every sufficiently large finite set A of integers has a strict Sidon subset
+    of cardinality at least (2/(3 sqrt(3)) - epsilon) sqrt(|A|), for every fixed
+    positive epsilon. The cardinality threshold is uniform in A and independent
+    of its diameter. Repeated summands are allowed in the Sidon definition.
+    The development proves an injective forward Freiman compression estimate,
+    combines it with Singer sets at prime-power moduli, and derives the optimized
+    asymptotic using a proved prime number theorem. It also establishes finite
+    bounds with ceilings and transfer to torsion-free abelian groups, including
+    real vector spaces. This does not resolve the conjectural coefficient 1.
+    Publication novelty has not been established.
+  authors:
+    - "Xinjie He"
+  # Licensee 10.0.0 reports the GPLv3 license text using this legacy SPDX ID.
+  # The source grant and retained Singer notices are explicitly GPL-3.0-only.
+  license: "GPL-3.0"
+  responsible_maintainers:
+    - "Xinjie He"
+
+# The submitted repository is intended to contain the substantive proof source.
+# If that changes to a thin wrapper, add repository.substantive_formalization
+# with the actual public repository and immutable commit instead of this comment.
+
+classification:
+  arxiv: ["math.NT", "math.CO"]
+  msc2020: ["11B30", "11B75", "05B10"]
+
+sources:
+  - title: "Affine compression and largest Sidon subsets: Research report and proof audit"
+    type: "other"
+    location: "docs/research-report.tex; unpublished report dated 3 October 2026; Theorem 1.1 and sections on affine compression, Singer averaging, and real-space transfer"
+    relationship: "formalizes"
+    note: >-
+      The informal report preceded this formalization. The report was developed
+      in a user-directed Codex research session. Its human bibliographic
+      authorship is not assigned here while project authorship is pending.
+      A verbatim source copy is included in docs/research-report.tex.
+      Only the scope stated in this metadata is claimed to be formalized;
+      the report contains additional results and exploratory material.
+      Source-based metadata describes this provenance, not a judgment about
+      whether the mathematical bound is new in the literature.
+  - title: "On the largest Sidon subset in a finite subset of R^N"
+    authors: ["Alexandre Bailleul", "Robin Riblet"]
+    id: "https://arxiv.org/abs/2605.03181v1"
+    type: "paper"
+    location: "Theorem 2.2, Lemma 2.3, and the Singer covering argument"
+    relationship: "adapts"
+    note: >-
+      Supplies the starting compression-and-Singer strategy. The present
+      argument adds a shared affine shift and exact two-point averaging,
+      giving |C| >= ceil(n/2 - n(n-1)/(8m)) in Z/mZ. The source's explicit
+      asymptotic coefficient is 1/(3 sqrt(3)); it is not asserted to be the
+      strongest consequence of all previously published work.
+    author_endorsement: "not-contacted"
+  - title: "Solving a linear equation in a set of integers II"
+    authors: ["Imre Z. Ruzsa"]
+    id: "https://doi.org/10.4064/aa-72-4-385-397"
+    type: "paper"
+    location: "Acta Arithmetica 72 (1995), 385-397; Definition 4.3 and Theorem 4.4"
+    relationship: "adapts"
+    note: >-
+      Prior affine randomization and transfer of forbidden coincidence patterns
+      are relevant to the method and its provenance. Specializing the published
+      transfer theorem gives a universal coefficient 1/5 for strict Sidon
+      subsets. The project does not claim invention of affine randomization.
+    author_endorsement: "not-contacted"
+  - title: "A theorem in finite projective geometry and some applications to number theory"
+    authors: ["James Singer"]
+    id: "https://doi.org/10.2307/1990067"
+    type: "paper"
+    location: "Transactions of the American Mathematical Society 43 (1938), 377-385"
+    relationship: "formalizes"
+    note: >-
+      Supporting finite-geometric ingredient: a strict Sidon set of size q+1
+      in the cyclic group of order q^2+q+1 for every prime power q. The actual
+      Lean proof is adapted from the separate formalization credited below.
+    author_endorsement: "n/a"
+  - title: "Additive Combinatorics, Exercises 2"
+    authors: ["Ben Green"]
+    id: "https://people.maths.ox.ac.uk/greenbj/papers/addcomb-sheet2.pdf"
+    type: "other"
+    location: "Questions 7 and 8"
+    relationship: "background"
+    note: >-
+      Public exercise notes contain a compression assertion which would imply
+      a universal coefficient 1/4. Its proof and publication provenance have
+      not been resolved in this project. No step of the formal proof relies
+      on that assertion, and novelty relative to prior work remains open.
+    author_endorsement: "not-contacted"
+
+related_formalizations:
+  - id: "https://github.com/d0d1/singer-theorem-lean/tree/0c890589afc58e8955a5d7c3a609daff6447da31"
+    relationship: "adapts"
+    note: >-
+      Singer and prime-power Singer proof sources by David B. Hulak,
+      Arthur F. Ramos, and Ruy J. G. B. de Queiroz, licensed GPL-3.0-only.
+      Their modules are consolidated and ported; the adapted modules retain
+      attribution. The original sources and license are preserved in the
+      parent research archive. This is prior formal proof work, distinct from
+      Singer's mathematical paper.
+  - id: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd/tree/c39a751132c88b6e8080b74c74023fd95b3d8be0"
+    relationship: "builds-on"
+    note: >-
+      Nine source modules from the community Prime Number Theorem And project
+      are vendored and ported for this package. The selected proof development
+      ends at WeakPNT in Wiener and chebyshev_asymptotic in Consequences;
+      unrelated unfinished statements and their dependents are omitted.
+      The source revision, changes, copyright notices, and Apache-2.0 license
+      are recorded under vendor/PNT. The theorem chebyshev_asymptotic supplies
+      prime density as a proved dependency, not an extra axiom. The earlier
+      Lean 4.31 research build instead used the xinjiegit fork at commit
+      187a9b1a641ab68df7282335c3fc9decea82aee5.
+
+status:
+  scope: >-
+    The proof development, ported to Lean 4.35.0-rc2, proves the universal integer bound,
+    the exact finite prime-power bound with two ceilings, variable-density
+    compression for 0 <= delta <= 1/2, and transfer to torsion-free abelian
+    groups. The core development and vendored PNT modules have rebuilt on that
+    toolchain. Local Comparator verification passed for all five selected
+    statements, including con-ron, Lean's kernel, and NanoDa. That local run
+    used the Mac no-sandbox option; the supplied Linux sandbox CI is configured
+    but has not been run. Palomar's own verification remains a separate step.
+    The report's weighted refinements,
+    structural obstructions, and exploratory computations are outside this
+    formalization. The Sidon conjecture with coefficient 1 remains unresolved.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+
+automation:
+  methods:
+    - method: "autonomous"
+      framework: "OpenAI Codex"
+      tool_setup: >-
+        AI agents performed mathematical exploration, literature searches,
+        informal proof writing, Lean proof development, compilation and axiom
+        audits, and separate adversarial checks. Exact model snapshot names
+        for all earlier phases were not retained and are not reconstructed.
+      prompting_notes: >-
+        The user set the strict Sidon problem and research objectives,
+        requested an end-to-end formalization, and then requested preparation
+        for Palomar. The initial research session had a two-hour elapsed-time
+        budget. Subsequent formalization and packaging were separate phases.
+  notes: >-
+    AI contributions are substantive and include the proposed improvement,
+    proof text, and Lean source. Human project authors and responsible
+    maintainers must be identified explicitly before submission. No independent
+    human mathematical review, endorsement by cited authors, or Palomar
+    acceptance is claimed. The project owner's requests do not by themselves
+    establish that a human has checked every mathematical or Lean statement.
+
+fidelity:
+  divergences: >-
+    The proof implements centered open circular cells instead of the report's
+    shifted half-open floor construction. Both express the same affine
+    compression strategy, with boundary sets of measure zero. The formal
+    quantifiers explicitly put the cardinality threshold before the ambient
+    integer set. The finite estimates retain ceilings. Forward Freiman
+    preservation and injectivity, rather than reflection of all additive
+    equalities, are used for pullback. The torsion-free-group extension is a
+    formalized strengthening of the integer and real-space presentation.
+
+review:
+  status: "agent-reviewed"
+  reviewers: ["Codex proof-audit agents"]
+  notes: >-
+    The existing development has separate agent audits of semantic fidelity,
+    Singer's construction, asymptotic quantifiers, and ambient transfer,
+    together with Lean compilation and transitive axiom reports. These are
+    automated checks, not independent human peer review. Lean 4.31 kernel
+    checking is recorded for the original proof. All 19 core modules and the
+    nine vendored PNT modules rebuilt on Lean 4.35.0-rc2 during preparation.
+    Local Comparator verification of the five selected statements completed
+    successfully on 4 October 2026 UTC, with con-ron processing 80,778
+    declarations and both Lean and NanoDa accepting. The local Mac run used
+    the no-sandbox option. The provided Linux sandbox CI and Palomar's own
+    verification have not been run. No public submission has been made.
+
+alignment:
+  namespace: "PalomarSidon"
+  statements:
+    - source: "Research report, Theorem 1.1, universal asymptotic assertion"
+      lean: "PalomarSidon.universal_integer_bound"
+      module: "Solution"
+      note: >-
+        A positive epsilon is followed by a single cardinality threshold and
+        then every integer set above that threshold. The Sidon predicate
+        includes repeated summands.
+    - source: "Research report, Theorem 1.1, finite inequality"
+      lean: "PalomarSidon.finite_prime_power_bound"
+      module: "Solution"
+      note: >-
+        For each prime power q, the subgroup modulus is q^2+q+1 and both
+        integer ceilings in the source inequality are retained.
+    - source: "Variable-density refinement of the report's affine compression theorem"
+      lean: "PalomarSidon.affine_compression"
+      module: "Solution"
+      note: >-
+        Every positive modulus m and 0 <= delta <= 1/2 admit a subset C and
+        injective forward Freiman map into Z/mZ with
+        |C| >= ceil(delta*n - delta^2*n*(n-1)/(2*m)). The report's half-density
+        statement follows by delta = 1/2. No converse Freiman implication is
+        asserted.
+    - source: "Research report, Theorem 1.1 and transfer from real configurations"
+      lean: "PalomarSidon.universal_real_bound"
+      module: "Solution"
+      note: "The common threshold precedes the finite dimension and the ambient set."
+    - source: "Generalization of the report's finite-configuration transfer"
+      lean: "PalomarSidon.universal_torsion_free_bound"
+      module: "Solution"
+      note: >-
+        Every torsion-free abelian group satisfies the same lower bound. The
+        Lean statement fixes that group before quantifying the threshold;
+        the underlying proof chooses the integer theorem's threshold.
+
+acknowledgements: >-
+  The Lean and mathlib communities; contributors to Prime Number Theorem And;
+  the Singer formalization authors credited above; and the mathematical
+  sources listed above. Bibliographic citation and software reuse do not
+  imply those authors have endorsed the present result or submission.

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "ruby (3.4.8)",
+    "-I <unpacked licensee-10.0.0>/lib",
+    "<official PalomarSubmission scripts/detect_license.rb>",
+    "LICENSE"
+  ],
+  "exit_code": 0,
+  "result": {
+    "licenses": [
+      {
+        "spdx_id": "GPL-3.0"
+      }
+    ],
+    "matched_files": [
+      {
+        "matched_license": "GPL-3.0"
+      }
+    ]
+  },
+  "detector_source_commit": "65f0154ed776cd26c224254aa57b379137f28b0d",
+  "licensee_version": "10.0.0",
+  "licensee_gem_url": "https://rubygems.org/downloads/licensee-10.0.0.gem",
+  "licensee_gem_sha256": "b0832ae91bd84bf7b4ec16dca72966b1116e10b6fc8a3c050517d20654b46d3b",
+  "license_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+}
